@@ -80,7 +80,7 @@ const q=document.getElementById('search');const tiles=[...document.querySelector
 function openApp(options){const ua=navigator.userAgent||navigator.vendor||window.opera;const isAndroid=/Android/i.test(ua);const isIOS=/iPhone|iPad|iPod/i.test(ua);const delay=options.fallbackDelayMs||1500;if(options.scheme){window.location=options.scheme;setTimeout(()=>window.open(options.fallbackUrl,'_blank'),delay);return}if(isAndroid&&options.androidIntent){window.location=options.androidIntent;setTimeout(()=>window.open(options.fallbackUrl,'_blank'),delay);return}if(isIOS&&options.iosScheme){window.location=options.iosScheme;setTimeout(()=>window.open(options.fallbackUrl,'_blank'),delay);return}window.open(options.fallbackUrl,'_blank')}
 function openTeams(){openApp({scheme:'msteams://',fallbackUrl:'https://teams.microsoft.com/'})}
 function openWarnWetter(){openApp({androidIntent:'intent://#Intent;package=de.dwd.warnapp;end',iosScheme:null,fallbackUrl:'https://www.dwd.de/DE/leistungen/warnwetterapp/warnwetterapp_node.html'})}
-function openNina(){openApp({androidIntent:'intent://#Intent;package=de.materna.bbk.mobile.app;end',iosScheme:null,fallbackUrl:'https://warnung.bund.de/'})}
+function openNina(){openApp({androidIntent:'intent://#Intent;action=android.intent.MAIN;category=android.intent.category.LAUNCHER;package=de.materna.bbk.mobile.app;end',iosScheme:null,fallbackUrl:'https://warnung.bund.de/'})}
 
 function toggleMiFahrzeuge(){
   const panel=document.getElementById('miFahrzeugePanel');
