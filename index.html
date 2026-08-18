@@ -13,68 +13,16 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" />
   <style>
-    :root{--bg:#0b0d12;--panel:#151922;--panel2:#1d2330;--panel3:#242b3a;--text:#f6f7fb;--muted:#a9b2c3;--line:rgba(255,255,255,.10);--fire:#d90416;--amber:#ffb000;--green:#22c55e;--blue:#3b82f6;--rad[...]
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,#2b1116 0,#0b0d12 40%,#08090d 100%);color:var(--text);font-fami[...]
-    header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(11,13,18,.97),rgba(11,13,18,.82));backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:14px 14p[...]
-    main{max-width:1060px;margin:0 auto;padding:14px}.hint{font-size:12px;color:var(--muted);line-height:1.4;margin:2px 2px 14px}.hint code{color:#fff;background:#222838;padding:2px 5px;border-rad[...]
-    button.tile{font:inherit;text-align:left;cursor:pointer}.tile{position:relative;min-height:86px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid rgba(255,255,25[...]
-    footer{max-width:1060px;margin:8px auto 0;color:var(--muted);font-size:11px;line-height:1.35;padding:0 14px 20px}.sources{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}nav{[...]
-  </style>
-  <!-- Feineres responsive Layout: B - Responsive 1/2/3 columns -->
-  <style>
-    /* Sections untereinander */
-    .grid { display:block !important; }
-
-    main .grid > section {
-      display: block;
-      width: 100%;
-      margin-bottom: 18px;
-      box-sizing: border-box;
-    }
-
-    /* Visuelle Trennung der Sektionen */
-    main .grid > section .section-head {
-      display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;
-    }
-
-    /* Links/Tiles innerhalb eines Abschnitts */
-    main .grid .links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: stretch;
-    }
-
-    /* B: Responsive 1/2/3 columns */
-    main .grid .links .tile {
-      flex: 1 1 100%;
-      max-width: 100%;
-      min-width: 220px;
-      background:var(--panel2);
-      border-radius:8px;
-      padding:10px;
-      transition:transform .12s ease, box-shadow .12s ease;
-      display:flex;flex-direction:column;justify-content:space-between;
-    }
-
-    main .grid .links .tile:hover{ transform:translateY(-4px); box-shadow:0 10px 30px rgba(0,0,0,0.45); }
-
-    @media (min-width: 600px) {
-      main .grid .links .tile { flex: 1 1 calc(50% - 14px); max-width: calc(50% - 14px); }
-    }
-    @media (min-width: 1000px) {
-      main .grid .links .tile { flex: 1 1 calc(33.333% - 14px); max-width: calc(33.333% - 14px); }
-    }
-
-    /* Feine Abstimmungen */
-    .tile .tile-top { display:flex;align-items:center; justify-content:space-between; gap:10px; }
-    .tile .name { font-weight:600; }
-    .tile .desc { color:var(--muted); font-size:13px; margin-top:8px; }
-    .tile .tag { margin-top:10px; font-size:12px; color:var(--muted); display:inline-flex; align-items:center; gap:6px; }
+    :root{--bg:#0b0d12;--panel:#151922;--panel2:#1d2330;--panel3:#242b3a;--text:#f6f7fb;--muted:#a9b2c3;--line:rgba(255,255,255,.10);--fire:#d90416;--amber:#ffb000;--green:#22c55e;--blue:#3b82f6;--radius:20px;--shadow:0 16px 36px rgba(0,0,0,.36)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,#2b1116 0,#0b0d12 40%,#08090d 100%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:86px}
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(11,13,18,.97),rgba(11,13,18,.82));backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:14px 14px 12px}.wrap{max-width:1060px;margin:0 auto}.top{display:flex;align-items:center;gap:12px}.crest{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--fire),#72000a);display:grid;place-items:center;box-shadow:var(--shadow);font-size:26px}h1{margin:0;font-size:22px;line-height:1.08}.subtitle{margin-top:3px;color:var(--muted);font-size:13px}.searchbar{margin-top:13px;display:flex;gap:8px}input{width:100%;border:1px solid var(--line);border-radius:16px;background:#10141d;color:var(--text);padding:14px 15px;font-size:16px;outline:none}input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.14)}
+    main{max-width:1060px;margin:0 auto;padding:14px}.hint{font-size:12px;color:var(--muted);line-height:1.4;margin:2px 2px 14px}.hint code{color:#fff;background:#222838;padding:2px 5px;border-radius:6px}.grid{display:grid;grid-template-columns:1fr;gap:14px}@media(min-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2}}section{background:linear-gradient(180deg,rgba(21,25,34,.98),rgba(18,22,31,.98));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:110px}.section-head{display:flex;align-items:center;justify-content:space-between;padding:15px 15px 11px;border-bottom:1px solid var(--line)}.section-title{font-weight:800;font-size:16px;display:flex;gap:9px;align-items:center}.section-title i{color:var(--amber)}.count{font-size:12px;color:var(--muted)}.links{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+    button.tile{font:inherit;text-align:left;cursor:pointer}.tile{position:relative;min-height:86px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid rgba(255,255,255,.09);border-radius:17px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:9px;transition:transform .12s ease,border .12s ease,background .12s ease}.tile:active{transform:scale(.98)}.tile:hover{border-color:rgba(255,176,0,.55);background:var(--panel3)}.tile.alarm{background:linear-gradient(135deg,rgba(217,4,22,.24),var(--panel2));border-color:rgba(217,4,22,.36)}.tile.warn{background:linear-gradient(135deg,rgba(255,176,0,.23),var(--panel2));border-color:rgba(255,176,0,.36)}.tile.sec{background:linear-gradient(135deg,rgba(59,130,246,.20),var(--panel2));border-color:rgba(59,130,246,.33)}.tile.internal{opacity:.84}.tile.call{background:linear-gradient(135deg,rgba(34,197,94,.18),var(--panel2));border-color:rgba(34,197,94,.32)}.tile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.name{font-size:14.5px;font-weight:760;line-height:1.15}.desc{font-size:12px;color:var(--muted);line-height:1.27}.ico{font-size:24px;color:#fff;opacity:.95}.tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)}.hidden{display:none!important}
+    footer{max-width:1060px;margin:8px auto 0;color:var(--muted);font-size:11px;line-height:1.35;padding:0 14px 20px}.sources{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(11,13,18,.95);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 7px calc(8px + env(safe-area-inset-bottom))}.nav-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}nav a{text-decoration:none;color:var(--muted);text-align:center;border-radius:13px;padding:7px 2px;font-size:11px}nav a i{display:block;font-size:18px;margin-bottom:2px}nav a:hover,nav a:active{background:#202634;color:var(--text)}
   </style>
 </head>
 <body>
-<header><div class="wrap"><div class="top"><div class="crest"><i class="bi bi-fire"></i></div><div><h1>Feuerwehr HUB</h1><div class="subtitle">Mobiler Schnellzugriff für Alarm, Einsatz, Verwaltun[...]
+<header><div class="wrap"><div class="top"><div class="crest"><i class="bi bi-fire"></i></div><div><h1>Feuerwehr HUB</h1><div class="subtitle">Mobiler Schnellzugriff für Alarm, Einsatz, Verwaltung und Warnungen</div></div></div><div class="searchbar"><input id="search" type="search" placeholder="Suchen: z. B. Divera247, DWD, Telefonliste ..." autocomplete="off" /></div></div></header>
 <main><div class="grid" id="hub">
 <section id="alarm"><div class="section-head"><div class="section-title"><i class="bi bi-bell-fill"></i>Alarm</div><div class="count">4</div></div><div class="links">
 <a class="tile alarm" href="https://app.divera247.com/login.html" target="_blank" rel="noopener" data-tags="alarm divera divera24 verfügbarkeit">
@@ -94,7 +42,7 @@
     <div class="tag"><i class="bi bi-lock-fill"></i> Login</div>
 </a>
 
-<a class="tile" href="#" onclick="openTeams();return false;" data-tags="alarm teams microsoft chat app"><div class="tile-top"><div class="name">Teams</div><i class="ico bi bi-microsoft-teams"></i>[...]
+<a class="tile" href="#" onclick="openTeams();return false;" data-tags="alarm teams microsoft chat app"><div class="tile-top"><div class="name">Teams</div><i class="ico bi bi-microsoft-teams"></i></div><div class="desc">Teams-App öffnen, sonst Web-Fallback.</div><div class="tag"><i class="bi bi-phone"></i> App/Web</div></a>
 <a class="tile whatsapp" href="whatsapp://app" data-tags="whatsapp messenger app chat direkt">
     <div class="tile-top">
         <div class="name">WhatsApp App</div>
@@ -104,63 +52,62 @@
     <div class="tag"><i class="bi bi-window"></i> Native App</div>
 </a>
 <section id="verwaltung" class="wide"><div class="section-head"><div class="section-title"><i class="bi bi-folder2-open"></i>Verwaltung</div><div class="count">7</div></div><div class="links">
-<a class="tile internal" href="https://verwaltung.ffw-muenchen.de/verwaltung/" target="_blank" rel="noopener" data-tags="verwaltung personal personalverwaltung"><div class="tile-top"><div class="n[...]
-<a class="tile" href="https://intern.ffm-mi.de/pages/login.php" target="_blank" rel="noopener" data-tags="verwaltung ticket mi support"><div class="tile-top"><div class="name">Ticket MI</div><i cl[...]
-<a class="tile" href="https://reservierung.ffw-muenchen.de/login" target="_blank" rel="noopener" data-tags="verwaltung reservierungen raum fahrzeug material"><div class="tile-top"><div class="name">Re[...]
-<a class="tile Ausfahrgenehmigung" href="https://apps.powerapps.com/play/e/default-900bc831-9a9a-41e3-a58a-c340d6db4e1a/a/8bf56ecf-cbe4-4462-a88c-e91f3d99442b?tenantId=900bc831-9a9a-41e3-a58a-c340[...]
+<a class="tile internal" href="https://verwaltung.ffw-muenchen.de/verwaltung/" target="_blank" rel="noopener" data-tags="verwaltung personal personalverwaltung"><div class="tile-top"><div class="name">Personalverwaltung</div><i class="ico bi bi-people-fill"></i></div><div class="desc">Stammdaten, Qualifikationen, Rollen.</div><div class="tag"><i class="bi bi-lock-fill"></i> extern</div></a>
+<a class="tile" href="https://intern.ffm-mi.de/pages/login.php" target="_blank" rel="noopener" data-tags="verwaltung ticket mi support"><div class="tile-top"><div class="name">Ticket MI</div><i class="ico bi bi-ticket-detailed-fill"></i></div><div class="desc">Tickets, Störungen, Anforderungen.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile" href="https://reservierung.ffw-muenchen.de/login" target="_blank" rel="noopener" data-tags="verwaltung reservierungen raum fahrzeug material"><div class="tile-top"><div class="name">Reservierungen</div><i class="ico bi bi-calendar-check-fill"></i></div><div class="desc">Räume, Fahrzeuge, Material buchen.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile powerapp" href="ms-apps:///providers/Microsoft.PowerApps/apps/8bf56ecf-cbe4-4462-a88c-e91f3d99442b" data-tags="powerapps mobil app direkt">
     <div class="tile-top">
-        <div class="name">Ausfahrgenehmigung</div>
-        <i class="ico bi bi-lightning-charge-fill"></i>
+        <div class="name">Power App (Mobil)</div>
+        <i class="ico bi bi-phone-vibrate"></i>
     </div>
-    <div class="desc">Startet die Microsoft Power App direkt in einem neuen Browser-Tab.</div>
-    <div class="tag"><i class="bi bi-box-arrow-up-right"></i> Microsoft</div>
-</a>
-<a class="tile" href="https://outlook.office.com/mail/" target="_blank" rel="noopener" data-tags="verwaltung outlook mail kalender"><div class="tile-top"><div class="name">Outlook</div><i class="ico b[...]
-<a class="tile internal" href="https://digitale-anwesenheit.ffm-mi.de/" data-tags="verwaltung digitale anwesenheit status"><div class="tile-top"><div class="name">Digitale Anwesenheit</div><i class="i[...]
-<a class="tile" href="https://www.microsoft365.com/launch/onedrive" target="_blank" rel="noopener" data-tags="verwaltung onedrive cloud dateien"><div class="tile-top"><div class="name">OneDrive</d[...]
+    <div class="desc">Öffnet die App ohne Umwege direkt in der installierten Power Apps Mobile-Anwendung.</div>
+    <div class="tag"><i class="bi bi-window"></i> Native App</div>
+</a><a class="tile" href="https://outlook.office.com/mail/" target="_blank" rel="noopener" data-tags="verwaltung outlook mail kalender"><div class="tile-top"><div class="name">Outlook</div><i class="ico bi bi-envelope-fill"></i></div><div class="desc">E-Mail und Kalender.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile internal" href="https://digitale-anwesenheit.ffm-mi.de/" data-tags="verwaltung digitale anwesenheit status"><div class="tile-top"><div class="name">Digitale Anwesenheit</div><i class="ico bi bi-person-check-fill"></i></div><div class="desc">Anwesenheit und Status erfassen.</div><div class="tag"><i class="bi bi-lock-fill"></i> intern offen</div></a>
+<a class="tile" href="https://www.microsoft365.com/launch/onedrive" target="_blank" rel="noopener" data-tags="verwaltung onedrive cloud dateien"><div class="tile-top"><div class="name">OneDrive</div><i class="ico bi bi-cloud-fill"></i></div><div class="desc">Dokumente und Dateien.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
 </div></section>
 <section id="kontakte" class="wide"><div class="section-head"><div class="section-title"><i class="bi bi-telephone-fill"></i>Kontakte</div><div class="count">4 + MI</div></div><div class="links">
-<a class="tile internal call" href="#" data-tags="kontakte bd telefonliste"><div class="tile-top"><div class="name">BD Telefonliste</div><i class="ico bi bi-journal-text"></i></div><div class="des[...]
-<button class="tile call" type="button" onclick="toggleMiFahrzeuge()" data-tags="kontakte mi fahrzeuge telefonliste ausklappbar"><div class="tile-top"><div class="name">MI Fahrzeuge</div><i class=[...]
-<a class="tile internal" href="#" data-tags="kontakte erkunder liste pdf"><div class="tile-top"><div class="name">Erkunder-Liste (PDF)</div><i class="ico bi bi-file-earmark-pdf-fill"></i></div><di[...]
-<a class="tile call" href="tel:+49" data-tags="kontakte direktwahl telefon"><div class="tile-top"><div class="name">Direktwahl</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div cla[...]
+<a class="tile internal call" href="#" data-tags="kontakte bd telefonliste"><div class="tile-top"><div class="name">BD Telefonliste</div><i class="ico bi bi-journal-text"></i></div><div class="desc">Interne Telefonliste.</div><div class="tag"><i class="bi bi-lock-fill"></i> intern offen</div></a>
+<button class="tile call" type="button" onclick="toggleMiFahrzeuge()" data-tags="kontakte mi fahrzeuge telefonliste ausklappbar"><div class="tile-top"><div class="name">MI Fahrzeuge</div><i class="ico bi bi-truck-front-fill"></i></div><div class="desc">Direktwahl-Liste ein- oder ausklappen.</div><div class="tag"><i class="bi bi-chevron-down" id="miChevron"></i> ausklappen</div></button>
+<a class="tile internal" href="#" data-tags="kontakte erkunder liste pdf"><div class="tile-top"><div class="name">Erkunder-Liste (PDF)</div><i class="ico bi bi-file-earmark-pdf-fill"></i></div><div class="desc">PDF-Datei verlinken oder lokal ablegen.</div><div class="tag"><i class="bi bi-filetype-pdf"></i> PDF offen</div></a>
+<a class="tile call" href="tel:+49" data-tags="kontakte direktwahl telefon"><div class="tile-top"><div class="name">Direktwahl</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Telefonnummer in <code>tel:+49...</code> ergänzen.</div><div class="tag"><i class="bi bi-telephone-fill"></i> Telefon</div></a>
 </div>
 <div id="miFahrzeugePanel" class="links hidden" aria-label="MI Fahrzeuge Direktwahl">
-<a class="tile call" href="tel:+4915257980879" data-tags="kontakte mi fahrzeuge mi 11.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 11.1</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915256860431" data-tags="kontakte mi fahrzeuge mi 11.2 telefon direktwahl"><div class="tile-top"><div class="name">MI 11.2</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915256876815" data-tags="kontakte mi fahrzeuge mi 40.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.1</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915256887173" data-tags="kontakte mi fahrzeuge mi 66.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 66.1</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915257947152" data-tags="kontakte mi fahrzeuge mi 53.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 53.1</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915256652816" data-tags="kontakte mi fahrzeuge mi 67.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 67.1</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915257980621" data-tags="kontakte mi fahrzeuge mi 40.2 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.2</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915256652547" data-tags="kontakte mi fahrzeuge mi 40.3 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.3</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915256876729" data-tags="kontakte mi fahrzeuge mi 40.4 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.4</div><i class="ico bi bi-telephone-outb[...]
-<a class="tile call" href="tel:+4915257983767" data-tags="kontakte mi fahrzeuge kat mi 36.1 telefon direktwahl"><div class="tile-top"><div class="name">KAT MI 36.1</div><i class="ico bi bi-telepho[...]
+<a class="tile call" href="tel:+4915257980879" data-tags="kontakte mi fahrzeuge mi 11.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 11.1</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915257980879</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915256860431" data-tags="kontakte mi fahrzeuge mi 11.2 telefon direktwahl"><div class="tile-top"><div class="name">MI 11.2</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915256860431</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915256876815" data-tags="kontakte mi fahrzeuge mi 40.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.1</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915256876815</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915256887173" data-tags="kontakte mi fahrzeuge mi 66.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 66.1</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915256887173</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915257947152" data-tags="kontakte mi fahrzeuge mi 53.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 53.1</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915257947152</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915256652816" data-tags="kontakte mi fahrzeuge mi 67.1 telefon direktwahl"><div class="tile-top"><div class="name">MI 67.1</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915256652816</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915257980621" data-tags="kontakte mi fahrzeuge mi 40.2 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.2</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915257980621</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915256652547" data-tags="kontakte mi fahrzeuge mi 40.3 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.3</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915256652547</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915256876729" data-tags="kontakte mi fahrzeuge mi 40.4 telefon direktwahl"><div class="tile-top"><div class="name">MI 40.4</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915256876729</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
+<a class="tile call" href="tel:+4915257983767" data-tags="kontakte mi fahrzeuge kat mi 36.1 telefon direktwahl"><div class="tile-top"><div class="name">KAT MI 36.1</div><i class="ico bi bi-telephone-outbound-fill"></i></div><div class="desc">Direktanruf Fahrzeug: +4915257983767</div><div class="tag"><i class="bi bi-telephone-fill"></i> Anrufen</div></a>
 </div></section>
 <section id="einsatz"><div class="section-head"><div class="section-title"><i class="bi bi-tools"></i>Einsatz-Tools</div><div class="count">4</div></div><div class="links">
-<a class="tile alarm" href="https://oku.sfs-bayern.de/" target="_blank" rel="noopener" data-tags="einsatz oku sfs bayern extern"><div class="tile-top"><div class="name">OKU</div><i class="ico bi [...]
-<a class="tile" href="https://intranet.ffw-muenchen.de/" target="_blank" rel="noopener" data-tags="einsatz intranet ffw münchen"><div class="tile-top"><div class="name">Intranet</div><i class="i[...]
-<a class="tile internal" href="#" data-tags="einsatz gsa gefahrstoff"><div class="tile-top"><div class="name">GSA</div><i class="ico bi bi-radioactive"></i></div><div class="desc">Fachanwendung er[...]
-<a class="tile" href="https://www.lfu.bayern.de/" target="_blank" rel="noopener" data-tags="einsatz lfu bayern cloud umwelt"><div class="tile-top"><div class="name">LfU Bayern Cloud</div><i cla[...]
+<a class="tile alarm" href="https://oku.sfs-bayern.de/" target="_blank" rel="noopener" data-tags="einsatz oku sfs bayern extern"><div class="tile-top"><div class="name">OKU</div><i class="ico bi bi-map-fill"></i></div><div class="desc">Externer OKU-Zugang der Staatlichen Feuerwehrschule Bayern.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile" href="https://intranet.ffw-muenchen.de/" target="_blank" rel="noopener" data-tags="einsatz intranet ffw münchen"><div class="tile-top"><div class="name">Intranet</div><i class="ico bi bi-building-lock"></i></div><div class="desc">Intranet der Feuerwehr München.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile internal" href="#" data-tags="einsatz gsa gefahrstoff"><div class="tile-top"><div class="name">GSA</div><i class="ico bi bi-radioactive"></i></div><div class="desc">Fachanwendung ergänzen.</div><div class="tag"><i class="bi bi-lock-fill"></i> intern offen</div></a>
+<a class="tile" href="https://www.lfu.bayern.de/" target="_blank" rel="noopener" data-tags="einsatz lfu bayern cloud umwelt"><div class="tile-top"><div class="name">LfU Bayern Cloud</div><i class="ico bi bi-cloud-haze2-fill"></i></div><div class="desc">Bayerisches Landesamt für Umwelt.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
 </div></section>
-<section id="warnungen" class="wide"><div class="section-head"><div class="section-title"><i class="bi bi-exclamation-triangle-fill"></i>Warnungen</div><div class="count">4</div></div><div class="lis[...]
-<a class="tile warn" href="#" onclick="openNina();return false;" data-tags="warnungen nina bbk warnung bund app"><div class="tile-top"><div class="name">NINA</div><i class="ico bi bi-bell-fill"></[...]
-<a class="tile warn" href="https://warnungen.katwarn.de/" target="_blank" rel="noopener" data-tags="warnungen katwarn"><div class="tile-top"><div class="name">KATWARN</div><i class="ico bi bi-cone[...]
-<a class="tile warn" href="https://www.meteo.physik.uni-muenchen.de/wetter/index.html" target="_blank" rel="noopener" data-tags="warnungen wetter münchen lmu meteo"><div class="tile-top"><div cl[...]
-<a class="tile warn" href="#" onclick="openWarnWetter();return false;" data-tags="warnungen dwd app warnwetter"><div class="tile-top"><div class="name">DWD-App</div><i class="ico bi bi-cloud-ligh[...]
+<section id="warnungen" class="wide"><div class="section-head"><div class="section-title"><i class="bi bi-exclamation-triangle-fill"></i>Warnungen</div><div class="count">4</div></div><div class="links">
+<a class="tile warn" href="#" onclick="openNina();return false;" data-tags="warnungen nina bbk warnung bund app"><div class="tile-top"><div class="name">NINA</div><i class="ico bi bi-bell-fill"></i></div><div class="desc">App-Start mit Web-Fallback auf warnung.bund.de.</div><div class="tag"><i class="bi bi-phone"></i> App/Web</div></a>
+<a class="tile warn" href="https://warnungen.katwarn.de/" target="_blank" rel="noopener" data-tags="warnungen katwarn"><div class="tile-top"><div class="name">KATWARN</div><i class="ico bi bi-cone-striped"></i></div><div class="desc">Warnportal KATWARN.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile warn" href="https://www.meteo.physik.uni-muenchen.de/wetter/index.html" target="_blank" rel="noopener" data-tags="warnungen wetter münchen lmu meteo"><div class="tile-top"><div class="name">Wetter München</div><i class="ico bi bi-cloud-sun-fill"></i></div><div class="desc">LMU Meteorologie Wetter München.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile warn" href="#" onclick="openWarnWetter();return false;" data-tags="warnungen dwd app warnwetter"><div class="tile-top"><div class="name">DWD-App</div><i class="ico bi bi-cloud-lightning-rain-fill"></i></div><div class="desc">WarnWetter-App mit Web-Fallback.</div><div class="tag"><i class="bi bi-phone"></i> App/Web</div></a>
 </div></section>
 <section id="security"><div class="section-head"><div class="section-title"><i class="bi bi-shield-lock-fill"></i>Security</div><div class="count">2</div></div><div class="links">
-<a class="tile sec" href="https://bitwarden.com/" target="_blank" rel="noopener" data-tags="security bitwarden passwort manager"><div class="tile-top"><div class="name">Bitwarden</div><i class="i[...]
-<a class="tile sec" href="https://www.microsoft.com/en-us/security/mobile-authenticator-app" target="_blank" rel="noopener" data-tags="security microsoft authenticator mfa"><div class="tile-top">[...]
+<a class="tile sec" href="https://bitwarden.com/" target="_blank" rel="noopener" data-tags="security bitwarden passwort manager"><div class="tile-top"><div class="name">Bitwarden</div><i class="ico bi bi-key-fill"></i></div><div class="desc">Passwortmanager.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile sec" href="https://www.microsoft.com/en-us/security/mobile-authenticator-app" target="_blank" rel="noopener" data-tags="security microsoft authenticator mfa"><div class="tile-top"><div class="name">MS Authenticator</div><i class="ico bi bi-shield-check"></i></div><div class="desc">Multi-Faktor-Authentifizierung.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
 </div></section>
 </div></main><footer></footer>
-<nav aria-label="Schnellnavigation"><div class="nav-inner"><a href="#alarm"><i class="bi bi-bell-fill"></i>Alarm</a><a href="#verwaltung"><i class="bi bi-folder2-open"></i>Verw.</a><a href="#kont[...]
+<nav aria-label="Schnellnavigation"><div class="nav-inner"><a href="#alarm"><i class="bi bi-bell-fill"></i>Alarm</a><a href="#verwaltung"><i class="bi bi-folder2-open"></i>Verw.</a><a href="#kontakte"><i class="bi bi-telephone-fill"></i>Kontakt</a><a href="#einsatz"><i class="bi bi-tools"></i>Einsatz</a><a href="#warnungen"><i class="bi bi-exclamation-triangle-fill"></i>Warnung</a></div></nav>
 <script>
-const q=document.getElementById('search');const tiles=[...document.querySelectorAll('.tile')];q.addEventListener('input',()=>{const s=q.value.trim().toLowerCase();tiles.forEach(t=>{const hit=(t.i[...]
-function openApp(options){const ua=navigator.userAgent||navigator.vendor||window.opera;const isAndroid=/Android/i.test(ua);const isIOS=/iPhone|iPad|iPod/i.test(ua);const delay=options.fallbackDel[...]
+const q=document.getElementById('search');const tiles=[...document.querySelectorAll('.tile')];q.addEventListener('input',()=>{const s=q.value.trim().toLowerCase();tiles.forEach(t=>{const hit=(t.innerText+' '+(t.dataset.tags||'')).toLowerCase().includes(s);t.classList.toggle('hidden',s&&!hit)});document.querySelectorAll('section').forEach(sec=>{const visible=[...sec.querySelectorAll('.tile')].some(t=>!t.classList.contains('hidden'));sec.classList.toggle('hidden',s&&!visible)})});
+function openApp(options){const ua=navigator.userAgent||navigator.vendor||window.opera;const isAndroid=/Android/i.test(ua);const isIOS=/iPhone|iPad|iPod/i.test(ua);const delay=options.fallbackDelayMs||1500;if(options.scheme){window.location=options.scheme;setTimeout(()=>window.open(options.fallbackUrl,'_blank'),delay);return}if(isAndroid&&options.androidIntent){window.location=options.androidIntent;setTimeout(()=>window.open(options.fallbackUrl,'_blank'),delay);return}if(isIOS&&options.iosScheme){window.location=options.iosScheme;setTimeout(()=>window.open(options.fallbackUrl,'_blank'),delay);return}window.open(options.fallbackUrl,'_blank')}
 function openTeams(){openApp({scheme:'msteams://',fallbackUrl:'https://teams.microsoft.com/'})}
 function openWarnWetter(){openApp({androidIntent:'intent://#Intent;package=de.dwd.warnapp;end',iosScheme:null,fallbackUrl:'https://www.dwd.de/DE/leistungen/warnwetterapp/warnwetterapp_node.html'})}
-function openNina(){openApp({androidIntent:'intent://#Intent;action=android.intent.MAIN;category=android.intent.category.LAUNCHER;package=de.materna.bbk.mobile.app;end',iosScheme:null,fallbackUrl:'htt[...]
+function openNina(){openApp({androidIntent:'intent://#Intent;action=android.intent.MAIN;category=android.intent.category.LAUNCHER;package=de.materna.bbk.mobile.app;end',iosScheme:null,fallbackUrl:'https://warnung.bund.de/'})}
 
 function toggleMiFahrzeuge(){
   const panel=document.getElementById('miFahrzeugePanel');
