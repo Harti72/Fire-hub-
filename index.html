@@ -1,69 +1,70 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#8b0000" />
-  <meta name="description" content="Mobiler Feuerwehr HUB mit Alarm, Verwaltung, Kontakten, Einsatz-Tools, Warnungen und Security." />
-  <title>Feuerwehr HUB</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Feuerwehr HUB">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" />
-  <style>
-    :root{--bg:#0b0d12;--panel:#151922;--panel2:#1d2330;--panel3:#242b3a;--text:#f6f7fb;--muted:#a9b2c3;--line:rgba(255,255,255,.10);--fire:#d90416;--amber:#ffb000;--green:#22c55e;--blue:#3b82f6;--radius:20px;--shadow:0 16px 36px rgba(0,0,0,.36)}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,#2b1116 0,#0b0d12 40%,#08090d 100%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:86px}
-    header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(11,13,18,.97),rgba(11,13,18,.82));backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:14px 14px 12px}.wrap{max-width:1060px;margin:0 auto}.top{display:flex;align-items:center;gap:12px}.crest{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--fire),#72000a);display:grid;place-items:center;box-shadow:var(--shadow);font-size:26px}h1{margin:0;font-size:22px;line-height:1.08}.subtitle{margin-top:3px;color:var(--muted);font-size:13px}.searchbar{margin-top:13px;display:flex;gap:8px}input{width:100%;border:1px solid var(--line);border-radius:16px;background:#10141d;color:var(--text);padding:14px 15px;font-size:16px;outline:none}input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.14)}
-    main{max-width:1060px;margin:0 auto;padding:14px}.hint{font-size:12px;color:var(--muted);line-height:1.4;margin:2px 2px 14px}.hint code{color:#fff;background:#222838;padding:2px 5px;border-radius:6px}.grid{display:grid;grid-template-columns:1fr;gap:14px}@media(min-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2}}section{background:linear-gradient(180deg,rgba(21,25,34,.98),rgba(18,22,31,.98));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:110px}.section-head{display:flex;align-items:center;justify-content:space-between;padding:15px 15px 11px;border-bottom:1px solid var(--line)}.section-title{font-weight:800;font-size:16px;display:flex;gap:9px;align-items:center}.section-title i{color:var(--amber)}.count{font-size:12px;color:var(--muted)}.links{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-    button.tile{font:inherit;text-align:left;cursor:pointer}.tile{position:relative;min-height:86px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid rgba(255,255,255,.09);border-radius:17px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:9px;transition:transform .12s ease,border .12s ease,background .12s ease}.tile:active{transform:scale(.98)}.tile:hover{border-color:rgba(255,176,0,.55);background:var(--panel3)}.tile.alarm{background:linear-gradient(135deg,rgba(217,4,22,.24),var(--panel2));border-color:rgba(217,4,22,.36)}.tile.warn{background:linear-gradient(135deg,rgba(255,176,0,.23),var(--panel2));border-color:rgba(255,176,0,.36)}.tile.sec{background:linear-gradient(135deg,rgba(59,130,246,.20),var(--panel2));border-color:rgba(59,130,246,.33)}.tile.internal{opacity:.84}.tile.call{background:linear-gradient(135deg,rgba(34,197,94,.18),var(--panel2));border-color:rgba(34,197,94,.32)}.tile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.name{font-size:14.5px;font-weight:760;line-height:1.15}.desc{font-size:12px;color:var(--muted);line-height:1.27}.ico{font-size:24px;color:#fff;opacity:.95}.tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)}.hidden{display:none!important}
-    footer{max-width:1060px;margin:8px auto 0;color:var(--muted);font-size:11px;line-height:1.35;padding:0 14px 20px}.sources{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(11,13,18,.95);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 7px calc(8px + env(safe-area-inset-bottom))}.nav-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}nav a{text-decoration:none;color:var(--muted);text-align:center;border-radius:13px;padding:7px 2px;font-size:11px}nav a i{display:block;font-size:18px;margin-bottom:2px}nav a:hover,nav a:active{background:#202634;color:var(--text)}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#8b0000" />
+<meta name="description" content="Mobiler Feuerwehr HUB mit Alarm, Verwaltung, Kontakten, Einsatz-Tools, Warnungen und Security." />
+<title>Feuerwehr HUB</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Feuerwehr HUB">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" />
+<style>
+:root{--bg:#0b0d12;--panel:#151922;--panel2:#1d2330;--panel3:#242b3a;--text:#f6f7fb;--muted:#a9b2c3;--line:rgba(255,255,255,.10);--fire:#d90416;--amber:#ffb000;--green:#22c55e;--blue:#3b82f6;--radius:20px;--shadow:0 16px 36px rgba(0,0,0,.36)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,#2b1116 0,#0b0d12 40%,#08090d 100%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:86px}
+header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(11,13,18,.97),rgba(11,13,18,.82));backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:14px 14px 12px}.wrap{max-width:1060px;margin:0 auto}.top{display:flex;align-items:center;gap:12px}.crest{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--fire),#72000a);display:grid;place-items:center;box-shadow:var(--shadow);font-size:26px}h1{margin:0;font-size:22px;line-height:1.08}.subtitle{margin-top:3px;color:var(--muted);font-size:13px}.searchbar{margin-top:13px;display:flex;gap:8px}input{width:100%;border:1px solid var(--line);border-radius:16px;background:#10141d;color:var(--text);padding:14px 15px;font-size:16px;outline:none}input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.14)}
+main{max-width:1060px;margin:0 auto;padding:14px}.hint{font-size:12px;color:var(--muted);line-height:1.4;margin:2px 2px 14px}.hint code{color:#fff;background:#222838;padding:2px 5px;border-radius:6px}.grid{display:grid;grid-template-columns:1fr;gap:14px}@media(min-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2}}section{background:linear-gradient(180deg,rgba(21,25,34,.98),rgba(18,22,31,.98));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:110px}.section-head{display:flex;align-items:center;justify-content:space-between;padding:15px 15px 11px;border-bottom:1px solid var(--line)}.section-title{font-weight:800;font-size:16px;display:flex;gap:9px;align-items:center}.section-title i{color:var(--amber)}.count{font-size:12px;color:var(--muted)}.links{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+button.tile{font:inherit;text-align:left;cursor:pointer}.tile{position:relative;min-height:86px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid rgba(255,255,255,.09);border-radius:17px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:9px;transition:transform .12s ease,border .12s ease,background .12s ease}.tile:active{transform:scale(.98)}.tile:hover{border-color:rgba(255,176,0,.55);background:var(--panel3)}.tile.alarm{background:linear-gradient(135deg,rgba(217,4,22,.24),var(--panel2));border-color:rgba(217,4,22,.36)}.tile.warn{background:linear-gradient(135deg,rgba(255,176,0,.23),var(--panel2));border-color:rgba(255,176,0,.36)}.tile.sec{background:linear-gradient(135deg,rgba(59,130,246,.20),var(--panel2));border-color:rgba(59,130,246,.33)}.tile.internal{opacity:.84}.tile.call{background:linear-gradient(135deg,rgba(34,197,94,.18),var(--panel2));border-color:rgba(34,197,94,.32)}.tile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.name{font-size:14.5px;font-weight:760;line-height:1.15}.desc{font-size:12px;color:var(--muted);line-height:1.27}.ico{font-size:24px;color:#fff;opacity:.95}.tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)}.hidden{display:none!important}
+footer{max-width:1060px;margin:8px auto 0;color:var(--muted);font-size:11px;line-height:1.35;padding:0 14px 20px}.sources{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(11,13,18,.95);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 7px calc(8px + env(safe-area-inset-bottom))}.nav-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}nav a{text-decoration:none;color:var(--muted);text-align:center;border-radius:13px;padding:7px 2px;font-size:11px}nav a i{display:block;font-size:18px;margin-bottom:2px}nav a:hover,nav a:active{background:#202634;color:var(--text)}
+</style>
 </head>
 <body>
 <header><div class="wrap"><div class="top"><div class="crest"><i class="bi bi-fire"></i></div><div><h1>Feuerwehr HUB</h1><div class="subtitle">Mobiler Schnellzugriff für Alarm, Einsatz, Verwaltung und Warnungen</div></div></div><div class="searchbar"><input id="search" type="search" placeholder="Suchen: z. B. Divera247, DWD, Telefonliste ..." autocomplete="off" /></div></div></header>
 <main><div class="grid" id="hub">
 <section id="alarm"><div class="section-head"><div class="section-title"><i class="bi bi-bell-fill"></i>Alarm</div><div class="count">4</div></div><div class="links">
 <a class="tile alarm" href="https://app.divera247.com/login.html" target="_blank" rel="noopener" data-tags="alarm divera divera24 verfügbarkeit">
-    <div class="tile-top">
-        <div class="name">Divera247 Login</div>
-        <i class="ico bi bi-broadcast-pin"></i>
-    </div>
-    <div class="desc">Direkt zur Anmeldung für Alarmierung und Verfügbarkeit.</div>
-    <div class="tag"><i class="bi bi-box-arrow-up-right"></i> Login</div>
+<div class="tile-top">
+<div class="name">Divera247 Login</div>
+<i class="ico bi bi-broadcast-pin"></i>
+</div>
+<div class="desc">Direkt zur Anmeldung für Alarmierung und Verfügbarkeit.</div>
+<div class="tag"><i class="bi bi-box-arrow-up-right"></i> Login</div>
 </a>
 <a class="tile alarm" href="https://app.groupalarm.com/de/login" target="_blank" rel="noopener" data-tags="alarm groupalarm galarm login anmeldung">
-    <div class="tile-top">
-        <div class="name">GroupAlarm Login</div>
-        <i class="ico bi bi-box-arrow-in-right"></i>
-    </div>
-    <div class="desc">Direkt zur zentralen Anmeldung für WebApp und Cockpit.</div>
-    <div class="tag"><i class="bi bi-lock-fill"></i> Login</div>
+<div class="tile-top">
+<div class="name">GroupAlarm Login</div>
+<i class="ico bi bi-box-arrow-in-right"></i>
+</div>
+<div class="desc">Direkt zur zentralen Anmeldung für WebApp und Cockpit.</div>
+<div class="tag"><i class="bi bi-lock-fill"></i> Login</div>
 </a>
+<a class="tile teams" href="msteams://teams.microsoft.com/" data-tags="teams microsoft app direkt">
 
 <a class="tile" href="#" onclick="openTeams();return false;" data-tags="alarm teams microsoft chat app"><div class="tile-top"><div class="name">Teams</div><i class="ico bi bi-microsoft-teams"></i></div><div class="desc">Teams-App öffnen, sonst Web-Fallback.</div><div class="tag"><i class="bi bi-phone"></i> App/Web</div></a>
 <a class="tile whatsapp" href="whatsapp://app" data-tags="whatsapp messenger app chat direkt">
-    <div class="tile-top">
+<div class="tile-top">
+        <div class="name">Teams (App)</div>
+        <i class="ico bi bi-cpu"></i>
         <div class="name">WhatsApp App</div>
         <i class="ico bi bi-whatsapp"></i>
-    </div>
+</div>
+    <div class="desc">Startet direkt die installierte Teams-App auf Ihrem Gerät.</div>
     <div class="desc">Öffnet sofort die installierte Anwendung auf Ihrem Gerät.</div>
-    <div class="tag"><i class="bi bi-window"></i> Native App</div>
+<div class="tag"><i class="bi bi-window"></i> Native App</div>
 </a>
+<a class="tile" href="#" onclick="openTeams();return false;" data-tags="alarm teams microsoft chat app"><div class="tile-top"><div class="name">Teams</div><i class="ico bi bi-microsoft-teams"></i></div><div class="desc">Teams-App öffnen, sonst Web-Fallback.</div><div class="tag"><i class="bi bi-phone"></i> App/Web</div></a>
+<a class="tile" href="https://web.whatsapp.com/" target="_blank" rel="noopener" data-tags="alarm whatsapp messenger"><div class="tile-top"><div class="name">WhatsApp</div><i class="ico bi bi-whatsapp"></i></div><div class="desc">Web-Zugriff für schnelle Abstimmung.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+</div></section>
 <section id="verwaltung" class="wide"><div class="section-head"><div class="section-title"><i class="bi bi-folder2-open"></i>Verwaltung</div><div class="count">7</div></div><div class="links">
 <a class="tile internal" href="https://verwaltung.ffw-muenchen.de/verwaltung/" target="_blank" rel="noopener" data-tags="verwaltung personal personalverwaltung"><div class="tile-top"><div class="name">Personalverwaltung</div><i class="ico bi bi-people-fill"></i></div><div class="desc">Stammdaten, Qualifikationen, Rollen.</div><div class="tag"><i class="bi bi-lock-fill"></i> extern</div></a>
 <a class="tile" href="https://intern.ffm-mi.de/pages/login.php" target="_blank" rel="noopener" data-tags="verwaltung ticket mi support"><div class="tile-top"><div class="name">Ticket MI</div><i class="ico bi bi-ticket-detailed-fill"></i></div><div class="desc">Tickets, Störungen, Anforderungen.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
 <a class="tile" href="https://reservierung.ffw-muenchen.de/login" target="_blank" rel="noopener" data-tags="verwaltung reservierungen raum fahrzeug material"><div class="tile-top"><div class="name">Reservierungen</div><i class="ico bi bi-calendar-check-fill"></i></div><div class="desc">Räume, Fahrzeuge, Material buchen.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
-<a class="tile powerapp" href="ms-apps:///providers/Microsoft.PowerApps/apps/8bf56ecf-cbe4-4462-a88c-e91f3d99442b" data-tags="powerapps mobil app direkt">
-    <div class="tile-top">
-        <div class="name">Power App (Mobil)</div>
-        <i class="ico bi bi-phone-vibrate"></i>
-    </div>
-    <div class="desc">Öffnet die App ohne Umwege direkt in der installierten Power Apps Mobile-Anwendung.</div>
-    <div class="tag"><i class="bi bi-window"></i> Native App</div>
-</a><a class="tile" href="https://outlook.office.com/mail/" target="_blank" rel="noopener" data-tags="verwaltung outlook mail kalender"><div class="tile-top"><div class="name">Outlook</div><i class="ico bi bi-envelope-fill"></i></div><div class="desc">E-Mail und Kalender.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
-<a class="tile internal" href="https://digitale-anwesenheit.ffm-mi.de/" data-tags="verwaltung digitale anwesenheit status"><div class="tile-top"><div class="name">Digitale Anwesenheit</div><i class="ico bi bi-person-check-fill"></i></div><div class="desc">Anwesenheit und Status erfassen.</div><div class="tag"><i class="bi bi-lock-fill"></i> intern offen</div></a>
+<a class="tile internal" href="#" data-tags="verwaltung ausfahrtgenehmigung fahrten"><div class="tile-top"><div class="name">Ausfahrtgenehmigung</div><i class="ico bi bi-clipboard-check-fill"></i></div><div class="desc">Freigaben und Fahrtanträge.</div><div class="tag"><i class="bi bi-lock-fill"></i> intern offen</div></a>
+<a class="tile" href="https://outlook.office.com/mail/" target="_blank" rel="noopener" data-tags="verwaltung outlook mail kalender"><div class="tile-top"><div class="name">Outlook</div><i class="ico bi bi-envelope-fill"></i></div><div class="desc">E-Mail und Kalender.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
+<a class="tile internal" href="#" data-tags="verwaltung digitale anwesenheit status"><div class="tile-top"><div class="name">Digitale Anwesenheit</div><i class="ico bi bi-person-check-fill"></i></div><div class="desc">Anwesenheit und Status erfassen.</div><div class="tag"><i class="bi bi-lock-fill"></i> intern offen</div></a>
 <a class="tile" href="https://www.microsoft365.com/launch/onedrive" target="_blank" rel="noopener" data-tags="verwaltung onedrive cloud dateien"><div class="tile-top"><div class="name">OneDrive</div><i class="ico bi bi-cloud-fill"></i></div><div class="desc">Dokumente und Dateien.</div><div class="tag"><i class="bi bi-box-arrow-up-right"></i> extern</div></a>
 </div></section>
 <section id="kontakte" class="wide"><div class="section-head"><div class="section-title"><i class="bi bi-telephone-fill"></i>Kontakte</div><div class="count">4 + MI</div></div><div class="links">
@@ -110,15 +111,14 @@ function openWarnWetter(){openApp({androidIntent:'intent://#Intent;package=de.dw
 function openNina(){openApp({androidIntent:'intent://#Intent;action=android.intent.MAIN;category=android.intent.category.LAUNCHER;package=de.materna.bbk.mobile.app;end',iosScheme:null,fallbackUrl:'https://warnung.bund.de/'})}
 
 function toggleMiFahrzeuge(){
-  const panel=document.getElementById('miFahrzeugePanel');
-  const chevron=document.getElementById('miChevron');
-  if(!panel) return;
-  const isHidden=panel.classList.toggle('hidden');
-  if(chevron){
-    chevron.classList.toggle('bi-chevron-down', isHidden);
-    chevron.classList.toggle('bi-chevron-up', !isHidden);
-  }
+const panel=document.getElementById('miFahrzeugePanel');
+const chevron=document.getElementById('miChevron');
+if(!panel) return;
+const isHidden=panel.classList.toggle('hidden');
+if(chevron){
+chevron.classList.toggle('bi-chevron-down', isHidden);
+chevron.classList.toggle('bi-chevron-up', !isHidden);
+}
 }
 </script>
 </body>
-</html>
