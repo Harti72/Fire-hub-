@@ -1,0 +1,9 @@
+{
+  "name": "Feuerwehr HUB",
+  "short_name": "FW HUB",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0d12",
+  "theme_color": "#d90416",
+  "orientation": "portrait"
+}
