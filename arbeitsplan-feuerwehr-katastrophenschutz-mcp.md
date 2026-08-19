@@ -60,7 +60,95 @@ Die Quellen werden vor einer technischen Integration anhand eines Quellensteckbr
 
 **Regel:** Eine Quelle wird erst als produktiv nutzbar markiert, wenn Herkunft, Lizenz, Aktualisierung, Ausfallverhalten und fachliche Grenzen dokumentiert sind.
 
-## 5. Arbeitspakete
+## 5. OpenStreetMap-Konzept für den MVP
+
+OpenStreetMap (OSM) dient im ersten MVP als öffentliche, community-basierte Geodatenquelle. GitHub stellt den Quellcode und optional ein statisches Web-Hosting bereit, ist aber kein Backend für Live-Geodaten oder Einsatzinformationen.
+
+### Technische Rollen
+
+```text
+Mobile/Web-App
+    |
+    +--> Kartenkacheln eines geeigneten OSM-Tile-Anbieters
+    +--> Overpass API fuer POI- und Infrastrukturabfragen
+    +--> Nominatim fuer eingeschraenktes Geocoding
+    |
+    +--> optionaler read-only MCP-Server fuer Agentenabfragen
+```
+
+**Vorgesehene Rollen der Komponenten**
+
+| Komponente | Rolle | Grenze |
+|---|---|---|
+| GitHub | Quellcode, Issues, Dokumentation und optional statisches Hosting | Kein Live-Datenspeicher und kein Einsatz-Backend |
+| Kartenkacheln | Darstellung der Karte | Nutzungsbedingungen und Attribution des Anbieters beachten |
+| Overpass API | Abfrage von OSM-Objekten nach Gebiet und Tags | Räumlich begrenzte Abfragen, Rate Limits und Caching erforderlich |
+| Nominatim | Adress- und Ortsauflösung | Nicht für Hochlast- oder Massengeocoding verwenden |
+| MCP-Server | Kontrollierte fachliche Suchfunktionen für Agenten | Read-only, keine beliebigen Netzwerk- oder Dateizugriffe |
+
+### Priorisierte Kartenlayer
+
+Der erste MVP soll nur wenige, klar verständliche Layer enthalten:
+
+| Layer | Beispiele für OSM-Tags | Fachliche Aussage |
+|---|---|---|
+| Feuerwehr und Rettungsdienst | `emergency=fire_station`, `emergency=ambulance_station`, `amenity=hospital` | Kartierter Standort, nicht automatisch aktuelle Einsatzbereitschaft |
+| Hydranten und Löschwasser | `emergency=fire_hydrant`, `fire_hydrant:type`, `fire_hydrant:position` | Kartierte Löschwasser-Infrastruktur mit möglicher Lückenhaftigkeit |
+| Sammelpunkte und Unterkünfte | `emergency=assembly_point`, `amenity=shelter` | Kartiertes Objekt; Eignung und aktuelle Verfügbarkeit separat prüfen |
+| Katastrophenschutz-Infrastruktur | `emergency=*` und regional geprüfte Ergänzungen | Nur nach definierter Tag-Mapping-Regel anzeigen |
+| ABC-relevante Umgebungshinweise | Industrie, Tankstellen und weitere geeignete POI-Tags | Kein Nachweis einer aktuellen Gefahrstofflage |
+
+ABC-relevante Daten werden zunächst ausdrücklich als **Umgebungshinweise** bezeichnet. OSM liefert keine verlässlich vollständige Klassifikation aktueller atomarer, biologischer oder chemischer Gefahren, Gefahrstoffmengen oder Betriebszustände.
+
+### Fachliche MCP-Werkzeuge
+
+Der MCP-Server übersetzt fachliche Kategorien in kontrollierte OSM-/Overpass-Abfragen:
+
+```text
+find_fire_stations(area, radius)
+find_fire_hydrants(area, radius)
+find_emergency_services(area, categories)
+find_shelters_and_assembly_points(area)
+find_abc_relevant_pois(area)
+search_map_features(area, category)
+```
+
+Jede Antwort muss mindestens enthalten:
+
+```json
+{
+  "source": "OpenStreetMap via Overpass API",
+  "retrieved_at": "2026-08-19T12:00:00Z",
+  "area": "definierte Region",
+  "category": "fire_station",
+  "items": [],
+  "limitations": [
+    "Community-maintained data",
+    "No guarantee of completeness or current operational status"
+  ]
+}
+```
+
+### Datenqualität und Nutzung
+
+- OSM-Daten sind community-basiert und nicht automatisch amtlich, vollständig oder aktuell.
+- Ein fehlender POI darf nicht als Beweis gewertet werden, dass das Objekt nicht existiert.
+- Ein vorhandener POI darf nicht als Nachweis für Einsatzbereitschaft, Zustand oder Verfügbarkeit interpretiert werden.
+- Jede Darstellung benötigt OSM-Attribution und den Abrufzeitpunkt.
+- Overpass-Abfragen werden auf ein Gebiet und eine Ergebnisgröße begrenzt.
+- Wiederholte Abfragen werden, soweit zulässig, gecacht.
+- Tile- und API-Nutzungsbedingungen werden je Anbieter dokumentiert.
+- OSM-Daten werden nicht allein als Grundlage für Alarmierung, Disposition oder Evakuierungsentscheidungen verwendet.
+
+### Abnahme des OSM-Konzepts
+
+- Die drei MVP-Layer Feuerwehr/Rettungsdienst, Hydranten/Löschwasser und Sammelpunkte/Unterkünfte sind in einer Testregion sichtbar.
+- Jede Kategorie besitzt ein dokumentiertes Tag-Mapping und eine bekannte fachliche Grenze.
+- Eine begrenzte Overpass-Abfrage funktioniert für eine Testregion und behandelt leere Ergebnisse sowie Timeouts.
+- Die Anwendung zeigt Quelle, Datenstand und OSM-Attribution an.
+- Der MCP-Server kann ausschließlich lesen, filtern und zusammenfassen.
+
+## 6. Arbeitspakete
 
 ### AP0 - Projektabgrenzung und Governance
 
@@ -89,6 +177,8 @@ Die Quellen werden vor einer technischen Integration anhand eines Quellensteckbr
 
 - Für jede Zielquelle einen Quellensteckbrief anlegen.
 - Offizielle API-, Feed- oder Download-Schnittstelle identifizieren.
+- Für OSM die Kartenkachelquelle, Overpass-Instanz und gegebenenfalls Nominatim getrennt bewerten.
+- Das Tag-Mapping für jeden MVP-Layer in einer versionierten Datei dokumentieren.
 - Authentifizierung, Rate Limits, Nutzungsbedingungen und Lizenz dokumentieren.
 - Beispielabfragen mit realistischen Gebieten und Zeitfenstern durchführen.
 - Fehlende oder nicht verlässlich zugängliche Quellen als offene Punkte markieren.
@@ -296,7 +386,7 @@ git grep -n -I -E "token|secret|password|api[_-]?key|bearer" -- .
 - Es wurden keine Zugangsdaten oder BMW-internen Inhalte übertragen.
 - Der erste Commit ist auf das private Remote begrenzt.
 
-## 6. Zeitplan für den MVP
+## 7. Zeitplan für den MVP
 
 | Zeitraum | Schwerpunkt | Ergebnis |
 |---|---|---|
@@ -308,7 +398,7 @@ git grep -n -I -E "token|secret|password|api[_-]?key|bearer" -- .
 
 Der Zeitplan ist eine Arbeitsannahme. Die Verfügbarkeit und Nutzbarkeit der externen Schnittstellen kann den Ablauf verändern.
 
-## 7. Entscheidungsgates
+## 8. Entscheidungsgates
 
 ### Gate 1 - Quellenfreigabe
 
@@ -326,41 +416,46 @@ Weiterarbeit nur, wenn Antworten gegen die Originalquellen geprüft und Einschr�
 
 Push nur, wenn ein Secret- und Inhaltscheck ohne Befund abgeschlossen wurde.
 
-## 8. Risiken und Gegenmaßnahmen
+## 9. Risiken und Gegenmaßnahmen
 
 | Risiko | Auswirkung | Gegenmaßnahme |
 |---|---|---|
 | Datenquelle ist veraltet oder nicht erreichbar | Falsche Lageeinschätzung | Zeitstempel, Datenalter, Timeout und klare Fehlermeldung |
 | Community-MCP-Server enthält schädlichen Code | Datenabfluss oder lokale Kompromittierung | Eigenentwicklung bevorzugen, Quellcode prüfen, Rechte minimieren |
 | Geodaten sind unvollständig | Fehlende oder falsche Infrastruktur | Quelle und Abdeckung sichtbar machen, keine Vollständigkeit behaupten |
+| Öffentliche OSM-Dienste werden überlastet oder ändern ihre Nutzungsvorgaben | App-Ausfälle oder Sperrung des Zugangs | Gebietslimits, Caching, Rate Limits und später eigener oder vertraglicher Geodatenbetrieb |
 | Warnung wird als Einsatzlage interpretiert | Fehlentscheidung | Hinweis-/Prognose-/amtliche Daten klar unterscheiden |
 | Lizenz oder Nutzungsbedingungen unklar | Rechtliches Risiko | Quellensteckbrief und Freigabegate |
 | Private oder interne Daten gelangen ins Repository | Datenschutz- oder Vertraulichkeitsverletzung | `.gitignore`, Secret-Scan und Vier-Augen-Prüfung |
 | MCP-Server erhält zu weitreichende Rechte | Erhöhtes Sicherheitsrisiko | Read-only, Allowlist, isolierte Laufzeit und minimale Berechtigungen |
 
-## 9. Offene Entscheidungen
+## 10. Offene Entscheidungen
 
 - Welche Region und welche konkreten Nutzergruppen stehen im Mittelpunkt?
 - Soll der MVP nur Deutschland oder auch internationale Gebiete abdecken?
 - Welche Quelle ist für Warnungen fachlich verbindlich?
+- Welcher OSM-Tile-Anbieter und welche Overpass-Instanz sind für den Prototyp zulässig?
+- Soll die App OSM-Daten direkt abfragen oder einen eigenen Proxy mit Cache verwenden?
+- Welche OSM-Tags werden für ABC-relevante Umgebungshinweise akzeptiert?
 - Wird der Server lokal, in einer kontrollierten Cloud-Umgebung oder nur als Demonstrator betrieben?
 - Welche Fachperson nimmt die Ergebnisse ab?
 - Welche Lizenz soll für den eigenen Code verwendet werden?
 - Welche Betriebs- und Verfügbarkeitsanforderungen gelten außerhalb des MVP?
 
-## 10. Erfolgskriterien
+## 11. Erfolgskriterien
 
 Der MVP gilt als erfolgreich, wenn:
 
 - mindestens ein priorisierter Anwendungsfall end-to-end funktioniert;
 - mindestens drei öffentliche Quellen bewertet und mindestens eine integriert wurde;
+- die drei priorisierten OSM-Layer in einer Testregion abgefragt und dargestellt werden können;
 - jede Antwort Quelle, Abrufzeit, Gültigkeit und Einschränkungen enthält;
 - der MCP-Server keine operativen Schreib- oder Steuerungsaktionen ausführen kann;
 - Tests für Normalfall, leere Daten, veraltete Daten und Quellenausfall vorhanden sind;
 - Sicherheits-, Datenschutz- und Lizenzrisiken dokumentiert sind;
 - der Arbeitsstand ohne Secrets in das private GitHub-Repository übertragen werden kann.
 
-## 11. Quellen und Referenzen
+## 12. Quellen und Referenzen
 
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 - [MCP Registry](https://registry.modelcontextprotocol.io/)
