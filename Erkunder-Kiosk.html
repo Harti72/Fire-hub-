@@ -1,17 +1,181 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#8b0000">
-<meta name="description" content="Erkunder-Kiosk für den schnellen Zugriff auf den Feuerwehr HUB.">
-<title>Erkunder-Kiosk | Feuerwehr HUB</title>
-<style>
-html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #0b0d12; }
-iframe { display: block; width: 100%; height: 100%; border: 0; }
-</style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#121212">
+	<meta name="description" content="Offline-Startseite für den Erkunder-Arbeitsplatz im CBRN-Einsatzfahrzeug.">
+	<title>Erkunder-Kiosk | Einsatzplatz</title>
+	<style>
+		:root { --bg-color: #0b0d12; --card-bg: #151922; --card-hover: #242b3a; --text-color: #f6f7fb; --muted: #a9b2c3; --accent-color: #d90416; --amber: #ffb000; --border-color: rgba(255,255,255,.10); --shadow: 0 16px 36px rgba(0,0,0,.36); }
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: radial-gradient(circle at top left, #2b1116 0, #0b0d12 40%, #08090d 100%); color: var(--text-color); margin: 0; padding: 0 14px 24px; }
+		header { position: sticky; top: 0; z-index: 10; background: linear-gradient(180deg, rgba(11,13,18,.97), rgba(11,13,18,.88)); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); padding: 14px 0 12px; }
+		.header { display: flex; align-items: center; gap: 12px; max-width: 1200px; margin: 0 auto; }
+		.crest { width: 50px; height: 50px; flex: 0 0 50px; border-radius: 16px; background: linear-gradient(135deg, var(--accent-color), #72000a); display: grid; place-items: center; box-shadow: var(--shadow); font-size: 25px; }
+		.header-copy { min-width: 0; }
+		.header h1 { margin: 0; color: #fff; font-size: 22px; line-height: 1.08; letter-spacing: 0; }
+		.header p { color: var(--muted); margin: 3px 0 0; font-size: 13px; }
+		.mode-switch { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; padding: 4px; border: 1px solid var(--border-color); border-radius: 12px; background: #10141d; flex: 0 0 auto; }
+		.mode-switch button { border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; font: inherit; font-size: 12px; padding: 7px 9px; }
+		.mode-switch button.active { background: #22c55e; color: #07130b; }
+		.mode-switch button:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+		main { max-width: 1200px; margin: 0 auto; padding-top: 20px; }
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 20px;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.card {
+			background: linear-gradient(180deg, rgba(21,25,34,.98), rgba(18,22,31,.98));
+			border: 1px solid var(--border-color);
+			border-radius: 20px;
+			box-shadow: var(--shadow);
+			padding: 20px;
+		}
+		.card h2 {
+			margin-top: 0;
+			color: var(--amber);
+			border-bottom: 1px solid var(--border-color);
+			padding-bottom: 8px;
+		}
+		.link-list { list-style: none; padding: 0; margin: 0; }
+		.link-list li { margin-bottom: 12px; }
+		.link-list li:last-child { margin-bottom: 0; }
+		.link-list a {
+			color: var(--text-color);
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			padding: 8px;
+			border-radius: 4px;
+			background-color: var(--card-hover);
+			transition: background 0.2s;
+		}
+		.link-list a:hover, .link-list a:focus-visible {
+			background-color: var(--accent-color);
+			color: #fff;
+			outline: none;
+		}
+		.draeger-link { margin-left: 10px; }
+		body[data-mode="offline"] .external-link { display: none; }
+		.mode-status { color: var(--muted); font-size: 12px; text-align: right; max-width: 1200px; margin: 10px auto 0; }
+		@media (max-width: 600px) { body { padding-left: 10px; padding-right: 10px; } .header { gap: 8px; } .crest { width: 42px; height: 42px; flex-basis: 42px; font-size: 20px; } .header h1 { font-size: 18px; } .header p { font-size: 11px; } .mode-switch button { padding: 7px 6px; } }
+		.status-bar {
+			text-align: center;
+			margin: 4px auto 0;
+			padding: 10px;
+			max-width: 1200px;
+			color: #888;
+			font-size: 0.8em;
+		}
+	</style>
 </head>
-<body>
-<iframe src="index.html" title="Erkunder-Kiosk"></iframe>
+<body data-mode="online">
+	<header>
+		<div class="header">
+			<div class="crest" aria-hidden="true">☢</div>
+			<div class="header-copy">
+				<h1>EINSATZPLATZ ERKUNDER</h1>
+				<p>Zentrale Startoberfläche |Kater München Mitte 66/1</p>
+			</div>
+			<div class="mode-switch" role="group" aria-label="Betriebsmodus">
+				<button type="button" data-mode-button="online" aria-pressed="true">Online</button>
+				<button type="button" data-mode-button="offline" aria-pressed="false">Offline</button>
+			</div>
+		</div>
+	</header>
+
+	<main class="grid">
+		<section class="card">
+			<h2>☢️ CBRN / ABC</h2>
+			<ul class="link-list">
+				<li class="link-heading">Dräger Prüfröhrchen</li>
+				<li><a class="draeger-link" href="file:///home/erkunder/Feuerwehr/Dräger-Roehrchen-und-Microtubes-21.pdf" target="_blank" rel="noopener">📄 Lokales Dräger-Tubes-Handbuch</a></li>
+				<li><a class="draeger-link" href="Draeger-Pruefrohrchen-Suche.html" target="_blank" rel="noopener">🔎 Offline-Suche Prüfröhrchen</a></li>
+				<li><a class="draeger-link" href="https://www.draeger.com/de_de/Productfinder/Portable-Gas-Detection" target="_blank" rel="noopener">🌐 Dräger Produktfinder Gasmesstechnik</a></li>
+				<li><a href="file:///home/erkunder/Feuerwehr/Einsatzkonzepte/" target="_blank" rel="noopener">📁 Einsatzkonzepte &amp; Handbücher</a></li>
+				<li><a href="file:///home/erkunder/Feuerwehr/Bedienungsanleitungen/" target="_blank" rel="noopener">📁 Bedienungsanleitungen Messgeräte</a></li>
+				<li><a href="file:///home/erkunder/Feuerwehr/Beständigkeitslisten/" target="_blank" rel="noopener">📁 Beständigkeitslisten Gefahrstoffe</a></li>
+			</ul>
+		</section>
+
+		<section class="card">
+			<h2>🗺️ Lage und Karten</h2>
+			<ul class="link-list">
+				<li><a href="https://atlas.bayern.de/" target="_blank" rel="noopener">🗺️ BayernAtlas</a></li>
+				<li><a href="https://oku.sfs-bayern.de/" target="_blank" rel="noopener">📍 OKU Koordinaten-Tool (SFS-B)</a></li>
+				<li><a href="https://wiki.einsatzleiterwiki.de/doku.php?id=start" target="_blank" rel="noopener">📖 Einsatzleiter Wiki</a></li>
+				<li><a href="https://www.lfu.bayern.de/" target="_blank" rel="noopener">☢️ BayernCloud (LfU Reaktorsicherheit)</a></li>
+			</ul>
+		</section>
+
+		<section class="card">
+			<h2>🛠️ Hardware &amp; Werkzeuge</h2>
+			<ul class="link-list">
+				<li><a href="file:///home/erkunder/Feuerwehr/Sharepoint_FF/" target="_blank" rel="noopener">☁️ Lokale SharePoint/OneDrive Kopie</a></li>
+				<li><a href="file:///home/erkunder/Skripte/usb-clear.sh">🧹 USB-Stick einlesen &amp; löschen</a></li>
+				<li><a href="file:///home/erkunder/Bilder/Kamera_Import/" target="_blank" rel="noopener">📸 Foto-Zentrale (Kamera-Import)</a></li>
+				<li><a href="file:///home/erkunder/Feuerwehr/Wartungspläne/" target="_blank" rel="noopener">🗓️ Wartungsplaner &amp; Dokumentation</a></li>
+				<li><a href="file:///home/erkunder/Feuerwehr/Warn-Durchsage-Texte/" target="_blank" rel="noopener">📢 Warn-Durchsage-Texte</a></li>
+			</ul>
+		</section>
+
+		<section class="card">
+			<h2>✉️ Kommunikation</h2>
+			<ul class="link-list">
+				<li><a href="mailto:erkunder@feuerwehr.de">📧 E-Mail Postfach (Erkunder)</a></li>
+				<li><a href="https://teams.microsoft.com/v2" target="_blank" rel="noopener">📹 Video-Call (MS Teams / Webex)</a></li>
+				<li><a href="javascript:window.print()">🖨️ Aktuelle Ansicht drucken</a></li>
+			</ul>
+		</section>
+
+		<section class="card">
+			<h2>⚠️ Online-Warnungen</h2>
+			<ul class="link-list">
+				<li><a href="https://www.dwd.de/DE/wetter/warnungen/warnWetter_node.html" target="_blank" rel="noopener">🌩️ DWD-Warnungen direkt öffnen</a></li>
+				<li><a href="https://warnung.bund.de/meldungen" target="_blank" rel="noopener">📢 Warnung.bund.de Meldungen</a></li>
+				<li><a href="https://warnungen.katwarn.de/" target="_blank" rel="noopener">🚨 KATWARN</a></li>
+			</ul>
+		</section>
+	</main>
+
+	<footer class="status-bar" id="modeStatus" aria-live="polite">
+		Online-Modus vorausgewählt, da eine Netzwerkverbindung erkannt wurde.
+	</footer>
+
+	<script>
+		const modeButtons = document.querySelectorAll('[data-mode-button]');
+		const modeStatus = document.getElementById('modeStatus');
+
+		document.querySelectorAll('.link-list a').forEach((link) => {
+			if (/^(https?:|mailto:)/i.test(link.getAttribute('href') || '')) {
+				link.closest('li')?.classList.add('external-link');
+			}
+		});
+
+		function setMode(mode, automatic = false) {
+			document.body.dataset.mode = mode;
+			modeButtons.forEach((button) => {
+				const isActive = button.dataset.modeButton === mode;
+				button.classList.toggle('active', isActive);
+				button.setAttribute('aria-pressed', String(isActive));
+			});
+			modeStatus.textContent = automatic
+				? `${mode === 'online' ? 'Online' : 'Offline'}-Modus automatisch gewählt. ${mode === 'online' ? 'Alle Funktionen und externen Links sind verfügbar.' : 'Externe Links sind ausgeblendet, lokale Funktionen bleiben verfügbar.'}`
+				: `${mode === 'online' ? 'Online' : 'Offline'}-Modus manuell gewählt. ${mode === 'online' ? 'Alle Funktionen und externen Links sind verfügbar.' : 'Externe Links sind ausgeblendet, lokale Funktionen bleiben verfügbar.'}`;
+		}
+
+		modeButtons.forEach((button) => {
+			button.addEventListener('click', () => setMode(button.dataset.modeButton));
+		});
+
+		setMode(navigator.onLine ? 'online' : 'offline', true);
+		window.addEventListener('online', () => setMode('online', true));
+		window.addEventListener('offline', () => setMode('offline', true));
+	</script>
 </body>
 </html>

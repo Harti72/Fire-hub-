@@ -53,147 +53,45 @@ Da private Smartphones im Einsatz- und Übungsdienst verboten sind, entfällt di
 
 ---
 
-## 🏠 Die Offline-Startseite (index.html)
+## 🏠 Die Offline-Startseite
 
-Als zentraler Einstiegspunkt dient eine lokal im Browser geladene HTML-Seite. Sie benötigt kein Internet und startet automatisch im Vollbild-Kioskmodus. Nachfolgend finden Sie den Quellcode, den Sie lokal als `index.html` speichern können.
+Die eigenständige Offline-Startseite liegt jetzt als [Erkunder-Kiosk.html](Erkunder-Kiosk.html) im Repository. Sie enthält die lokalen Einsatzdokumente, Online-Portale, Hardware-Werkzeuge und Kommunikationsfunktionen. Der Online-/Offline-Schalter blendet bei fehlender Verbindung nur externe Links aus.
 
-```html
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erkunder Workplace</title>
-    <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --accent-color: #e63946;
-            --accent-hover: #ff4d5a;
-            --border-color: #333;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 3px solid var(--accent-color);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            margin: 0;
-            color: #fff;
-            letter-spacing: 1px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .card h2 {
-            margin-top: 0;
-            color: var(--accent-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-        .link-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .link-list li {
-            margin-bottom: 12px;
-        }
-        .link-list a {
-            color: var(--text-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #252525;
-            transition: background 0.2s;
-        }
-        .link-list a:hover {
-            background-color: var(--accent-color);
-            color: #fff;
-        }
-        .status-bar {
-            margin-top: 4px;
-            font-size: 0.85em;
-            color: #888;
-        }
-    </style>
-</head>
-<body>
+### Autostart im Kiosk-Modus
 
-    <div class="header">
-        <h1>EINSATZPLATZ ERKUNDER</h1>
-        <div style="color: #aaa; margin-top: 5px;">Zentrale Startoberfläche | Feuerwehr</div>
-    </div>
+Für den Erkunder-Arbeitsplatz wird empfohlen, den Browser nach der Anmeldung des lokalen Benutzers `erkunder` automatisch mit der Kiosk-Seite zu starten. Dadurch steht die Startoberfläche ohne manuelle Navigation bereit.
 
-    <div class="grid">
-        <!-- Offline-Daten -->
-        <div class="card">
-            <h2>📂 Offline-Daten (Lokal)</h2>
-            <ul class="link-list">
-                <li><a href="file:///home/erkunder/Feuerwehr/Dräger_Prüfröhrchen_Übersicht.pdf" target="_blank">📄 Übersicht Dräger Prüfröhrchen</a></li>
-                <li><a href="file:///home/erkunder/Feuerwehr/Einsatzkonzepte/" target="_blank">📁 Einsatzkonzepte & Handbücher</a></li>
-                <li><a href="file:///home/erkunder/Feuerwehr/Bedienungsanleitungen/" target="_blank">📁 Bedienungsanleitungen Messgeräte</a></li>
-                <li><a href="file:///home/erkunder/Feuerwehr/Beständigkeitslisten/" target="_blank">📁 Beständigkeitslisten Gefahrstoffe</a></li>
-                <li><a href="file:///home/erkunder/Feuerwehr/Sharepoint_FF/" target="_blank">☁️ Lokale SharePoint/OneDrive Kopie</a></li>
-            </ul>
-        </div>
+Der vorgesehene Ablauf ist:
 
-        <!-- Online-Portale -->
-        <div class="card">
-            <h2>🌐 Online-Portale (Einsatz)</h2>
-            <ul class="link-list">
-                <li><a href="https://geoportal.bayern.de/bayernatlas/" target="_blank">🗺️ BayernAtlas</a></li>
-                <li><a href="https://www.einsatzleiter-wiki.de/" target="_blank">📖 Einsatzleiter Wiki</a></li>
-                <li><a href="https://oku.sfs-bayern.de/" target="_blank">📍 OKU Koordinaten-Tool (SFS-B)</a></li>
-                <li><a href="https://www.divera247.com/" target="_blank">🚨 Divera 24/7</a></li>
-                <li><a href="https://www.lfu.bayern.de/" target="_blank">☢️ Bayern Cloud (LfU Reaktorsicherheit)</a></li>
-            </ul>
-        </div>
+1. Linux startet den Benutzer `erkunder`.
+2. NetworkManager verbindet automatisch ein verfügbares, bekanntes WLAN-Profil.
+3. Chromium startet im Kiosk-Modus mit `Erkunder-Kiosk.html`.
+4. Die Seite wählt den Online- oder Offline-Modus anhand der Netzwerkverbindung vor.
+5. Bei einem Browserabsturz wird der Neustart durch die lokale Systemkonfiguration sichergestellt.
 
-        <!-- Hardware & Werkzeuge -->
-        <div class="card">
-            <h2>🛠️ Hardware & Werkzeuge</h2>
-            <ul class="link-list">
-                <li><a href="file:///home/erkunder/Skripte/usb-clear.sh">🧹 USB-Stick einlesen & löschen</a></li>
-                <li><a href="file:///home/erkunder/Bilder/Kamera_Import/" target="_blank">📸 Foto-Zentrale (Kamera-Import)</a></li>
-                <li><a href="file:///home/erkunder/Feuerwehr/Wartungspläne/" target="_blank">🗓️ Wartungsplaner & Dokumentation</a></li>
-            </ul>
-        </div>
+Beispiel für einen Chromium-Teststart:
 
-        <!-- Kommunikation -->
-        <div class="card">
-            <h2>✉️ Kommunikation</h2>
-            <ul class="link-list">
-                <li><a href="mailto:erkunder@feuerwehr.de">📧 E-Mail Postfach (Erkunder)</a></li>
-                <li><a href="https://teams.microsoft.com/" target="_blank">📹 Video-Call (MS Teams / Webex)</a></li>
-                <li><a href="javascript:window.print()">🖨️ Aktuelle Ansicht drucken</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div style="text-align: center; margin-top: 4px; padding: 10px; color: #555; font-size: 0.8em;">
-        Erkunder-Arbeitsplatz-System | Autologin-Modus aktiv | Physische Absicherung über Hardware-Token
-    </div>
-
-</body>
-</html>
+```bash
+chromium --kiosk --noerrdialogs --disable-session-crashed-bubble file:///home/erkunder/Erkunder-Kiosk.html
 ```
+
+Für Desktop-Umgebungen mit Autostart kann folgende Datei verwendet werden:
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=Erkunder-Kiosk
+Exec=chromium --kiosk --noerrdialogs --disable-session-crashed-bubble file:///home/erkunder/Erkunder-Kiosk.html
+Terminal=false
+X-GNOME-Autostart-enabled=true
+```
+
+Der vorgesehene Speicherort ist:
+
+```text
+/home/erkunder/.config/autostart/erkunder-kiosk.desktop
+```
+
+Die Autostart-Datei und die Kiosk-Seite können im Repository dokumentiert beziehungsweise versioniert werden. WLAN-Passwörter, NetworkManager-Profile, Zertifikate und lokale Einsatzdokumente werden dagegen ausschließlich auf dem Linux-Rechner oder über einen geschützten Provisioning-Prozess eingerichtet. Sie dürfen nicht in Git gespeichert werden.
+
+Für einen produktiven Betrieb sind zusätzlich ein eigener Benutzer ohne Administratorrechte, LUKS-Festplattenverschlüsselung, regelmäßige Browser- und Systemupdates sowie ein definierter Wartungs- und Notausstieg erforderlich. Funktionen wie USB-Löschen oder Kameraimport müssen über lokale Linux-Verknüpfungen beziehungsweise geprüfte Skripte angebunden werden, da eine HTML-Seite keine Shell-Skripte ausführen darf.

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#121212">
+    <title>Offline-Suche Prüfröhrchen | Erkunder</title>
+    <style>
+        :root { --bg: #0b0d12; --panel: #151922; --panel-hover: #242b3a; --text: #f6f7fb; --muted: #a9b2c3; --amber: #ffb000; --fire: #d90416; --line: rgba(255,255,255,.10); }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; padding: 14px; background: radial-gradient(circle at top left, #2b1116 0, #0b0d12 40%, #08090d 100%); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+        main { max-width: 760px; margin: 0 auto; }
+        header { display: flex; align-items: center; gap: 12px; padding: 10px 0 16px; border-bottom: 1px solid var(--line); }
+        .crest { width: 50px; height: 50px; flex: 0 0 50px; display: grid; place-items: center; border-radius: 16px; background: linear-gradient(135deg, var(--fire), #72000a); font-size: 25px; }
+        h1 { margin: 0; font-size: 22px; line-height: 1.08; }
+        .subtitle { margin-top: 3px; color: var(--muted); font-size: 13px; }
+        .panel { margin-top: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(180deg, rgba(21,25,34,.98), rgba(18,22,31,.98)); }
+        label { display: block; margin-bottom: 8px; color: var(--amber); font-weight: 800; }
+        .search { display: flex; gap: 8px; }
+        input, select { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: #10141d; color: var(--text); padding: 12px; font: inherit; outline: none; }
+        input:focus, select:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(255,176,0,.14); }
+        button, a { border: 0; border-radius: 12px; padding: 12px 14px; color: var(--text); background: var(--panel-hover); font: inherit; text-decoration: none; cursor: pointer; white-space: nowrap; }
+        button:hover, button:focus-visible, a:hover, a:focus-visible { background: var(--fire); outline: none; }
+        p { color: var(--muted); line-height: 1.5; }
+        .note { margin-bottom: 0; font-size: 13px; }
+        #results { margin-top: 20px; }
+        .result { margin-top: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-hover); }
+        .result strong { color: var(--amber); }
+        .result small { display: block; margin-top: 4px; color: var(--muted); }
+        @media (max-width: 500px) { .search { flex-direction: column; } button { width: 100%; } }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <div class="crest" aria-hidden="true">☢</div>
+            <div>
+                <h1>Offline-Suche Prüfröhrchen</h1>
+                <div class="subtitle">Lokale Suche im Dräger-Tubes-Handbuch</div>
+            </div>
+        </header>
+
+        <section class="panel">
+            <label for="tubeSelect">Vorhandenes Prüfröhrchen auswählen</label>
+            <form class="search" id="searchForm">
+                <select id="tubeSelect" required>
+                    <option value="">Prüfröhrchen auswählen ...</option>
+                </select>
+                <button type="submit">Auswahl anzeigen</button>
+            </form>
+            <p class="note">Die Auswahl wird aus der strukturierten lokalen Markdown-Liste befüllt. Für Details steht das originale Dräger-Handbuch bereit.</p>
+            <div id="results" aria-live="polite"></div>
+            <p><a href="file:///home/erkunder/Feuerwehr/Dräger-Roehrchen-und-Microtubes-21.pdf" target="_blank" rel="noopener">📄 Lokales Handbuch ohne Suchbegriff öffnen</a></p>
+            <p><a href="https://ffwmuenchen.sharepoint.com/:b:/t/GRP-ABCZugMnchen-AbtStadtmitte/IQALPD_QY0iYS79c15sF38CkAZG0V2iymJr3CZrEwG5RlEc?e=okcjX8" target="_blank" rel="noopener">☁️ Handbuch aus SharePoint beziehen</a></p>
+        </section>
+    </main>
+
+    <script>
+        const results = document.getElementById('results');
+        const tubeSelect = document.getElementById('tubeSelect');
+        let tubes = [];
+        const fallbackTubes = [
+            ['Acrylonitril', '0,5/a', 'vorhanden'], ['Amin-Test', 'Amin-Test', 'vorhanden'], ['Arsenwasserstoff', '0,05/a', 'vorhanden'],
+            ['Benzin-Kohlenwasserstoffe', '100/a', 'vorhanden'], ['Blausäure', '0,5/a', 'vorhanden'], ['Chlor', '0,2/a', 'vorhanden'],
+            ['Chlorbenzol', '5/a', 'vorhanden'], ['Chloroform', '0,25/a', 'vorhanden'], ['Chlorkiprin', '0,1/a', 'vorhanden'],
+            ['Cyclohexylamin', 'Cyclohexylamin', 'vorhanden'], ['Epichlorhydrin', '5/c', 'vorhanden'], ['Ethylenoxid', '1/a', 'vorhanden'],
+            ['Fluorwasserstoff', '0,5/a', 'vorhanden'], ['Formaldehyd', '0,2/a', 'vorhanden'], ['Halogen-Kohlenwasserstoffe', '100/a', 'vorhanden'],
+            ['Kohlenstoffmonoxid', '10/b', 'vorhanden'], ['Methanol', '20/a', 'vorhanden'], ['Perchlorethylen', '2/a', 'vorhanden'],
+            ['Phosgen', '0,25/c', 'vorhanden'], ['Phosphorsäureester', '0,05/a', 'vorhanden'], ['Phosphorsäureester', '0,1/c', 'vorhanden'],
+            ['Salzsäure', '0,2/a', 'vorhanden'], ['Schwefeldioxid', '0,5/a', 'vorhanden'], ['Styrol', '10/b', 'vorhanden'],
+            ['Tetrachlorkohlenstoff', '1/a', 'vorhanden'], ['Thiother', 'Thiother', 'vorhanden'], ['Toluol', '100/a', 'vorhanden'],
+            ['Trichlorethan', '50/d', 'vorhanden'], ['Tenax', 'noch zu bestätigen', 'ergänzen und prüfen']
+        ].map(([name, code, status]) => ({ name, code, status }));
+
+        function escapeHtml(value) {
+            return value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+        }
+
+        function renderSelection() {
+            const tube = tubes[Number(tubeSelect.value)];
+            results.innerHTML = tube
+                ? `<div class="result"><strong>${escapeHtml(tube.name)}</strong><small>Röhrchenkennung: ${escapeHtml(tube.code)} | Status: ${escapeHtml(tube.status)}</small><small>Weitere Messdaten bitte im aktuellen Dräger-Handbuch prüfen.</small></div>`
+                : '<p>Bitte ein Prüfröhrchen auswählen.</p>';
+        }
+
+        function populateOptions() {
+            tubes.forEach((tube, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${tube.name} (${tube.code})`;
+                tubeSelect.appendChild(option);
+            });
+        }
+
+        fetch('Draeger-Pruefrohrchen.md')
+            .then((response) => response.ok ? response.text() : Promise.reject(new Error('Markdown-Datei nicht gefunden.')))
+            .then((markdown) => {
+                tubes = markdown.split('\n').slice(2).map((line) => {
+                    const cells = line.match(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$/);
+                    return cells ? { name: cells[1], code: cells[2], status: cells[3] } : null;
+                }).filter((tube) => tube && tube.name !== 'Stoff / Bezeichnung' && !tube.name.startsWith('-'));
+                populateOptions();
+                renderSelection();
+            })
+            .catch(() => {
+                tubes = fallbackTubes;
+                populateOptions();
+                results.innerHTML = '<p>Lokale Prüfröhrchen-Liste geladen.</p>';
+            });
+
+        document.getElementById('searchForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            renderSelection();
+        });
+
+        tubeSelect.addEventListener('change', renderSelection);
+    </script>
+</body>
+</html>
