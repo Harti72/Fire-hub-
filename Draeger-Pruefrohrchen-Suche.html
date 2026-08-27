@@ -48,7 +48,7 @@
                 </select>
                 <button type="submit">Auswahl anzeigen</button>
             </form>
-            <p class="note">Die Auswahl wird aus der strukturierten lokalen Markdown-Liste befüllt. Für Details steht das originale Dräger-Handbuch bereit.</p>
+            <p class="note">Die Auswahl stammt aus der Bestandsliste. Die Detaildaten werden im vollständigen lokalen Dräger-Handbuch gesucht.</p>
             <div id="results" aria-live="polite"></div>
             <p><a href="file:///home/erkunder/Feuerwehr/Dräger-Roehrchen-und-Microtubes-21.pdf" target="_blank" rel="noopener">📄 Lokales Handbuch ohne Suchbegriff öffnen</a></p>
             <p><a href="https://ffwmuenchen.sharepoint.com/:b:/t/GRP-ABCZugMnchen-AbtStadtmitte/IQALPD_QY0iYS79c15sF38CkAZG0V2iymJr3CZrEwG5RlEc?e=okcjX8" target="_blank" rel="noopener">☁️ Handbuch aus SharePoint beziehen</a></p>
@@ -59,7 +59,8 @@
         const results = document.getElementById('results');
         const tubeSelect = document.getElementById('tubeSelect');
         let tubes = [];
-        const fallbackTubes = [
+        let handbook = '';
+        const embeddedTubes = [
             ['Acrylonitril', '0,5/a', 'vorhanden'], ['Amin-Test', 'Amin-Test', 'vorhanden'], ['Arsenwasserstoff', '0,05/a', 'vorhanden'],
             ['Benzin-Kohlenwasserstoffe', '100/a', 'vorhanden'], ['Blausäure', '0,5/a', 'vorhanden'], ['Chlor', '0,2/a', 'vorhanden'],
             ['Chlorbenzol', '5/a', 'vorhanden'], ['Chloroform', '0,25/a', 'vorhanden'], ['Chlorkiprin', '0,1/a', 'vorhanden'],
@@ -71,15 +72,86 @@
             ['Tetrachlorkohlenstoff', '1/a', 'vorhanden'], ['Thiother', 'Thiother', 'vorhanden'], ['Toluol', '100/a', 'vorhanden'],
             ['Trichlorethan', '50/d', 'vorhanden'], ['Tenax', 'noch zu bestätigen', 'ergänzen und prüfen']
         ].map(([name, code, status]) => ({ name, code, status }));
+        const embeddedDetails = {
+            'Acrylonitril|0,5/a': {
+                page: '124', measurement: '0,2 bis 4 ppm / 5 bis 50 ppm', strokes: '20 / 5',
+                duration: 'ca. 4 min / ca. 1 min', color: 'gelb -> rot',
+                interference: 'Bei Ethanol, n-Hexan, Toluol und Butadien kann die Empfindlichkeit reduziert oder die Anzeige unterdrückt werden. Bestandskennung 0,5/a weicht von der Handbuchkennung 0,2/a ab.'
+            },
+            'Amin-Test|Amin-Test': {
+                page: '126', measurement: 'Qualitative Bestimmung von basisch reagierenden Gasen', strokes: '1',
+                duration: 'ca. 5 s', color: 'gelb -> blau',
+                interference: 'Unspezifischer Nachweis basisch reagierender Gase; eine Differenzierung ist nicht möglich.'
+            },
+            'Arsenwasserstoff|0,05/a': {
+                page: '133', measurement: '0,05 bis 3 ppm', strokes: '20',
+                duration: 'ca. 6 min', color: 'weiß -> grauviolett',
+                interference: 'Phosphorwasserstoff und Antimonwasserstoff werden ebenfalls angezeigt, mit unterschiedlicher Empfindlichkeit.'
+            },
+            'Benzin-Kohlenwasserstoffe|100/a': { page: '134', measurement: '100 bis 2500 ppm für n-Octan', strokes: '2', duration: 'ca. 30 s', color: 'weiß -> grün', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Blausäure|0,5/a': { page: '140', measurement: '0,5 bis 5 ppm / 5 bis 50 ppm', strokes: '2,5 / 0,5', duration: 'siehe Handbuch', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Chlor|0,2/a': { page: '142', measurement: '0,2 bis 3 ppm / 3 bis 30 ppm', strokes: '10 / 1', duration: 'ca. 3 min / ca. 30 s', color: 'weiß -> gelborange', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Chlorbenzol|5/a': { page: '145', measurement: '5 bis 200 ppm', strokes: '10', duration: 'ca. 3 min', color: 'blau -> gelbgrau', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Chloroform|0,25/a': { page: '149', measurement: 'Bestandskennung abweichend; Handbuch: 2 bis 10 ppm mit 2/a', strokes: '10', duration: 'ca. 9 min', color: 'weiß -> gelb', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Chlorkiprin|0,1/a': { page: '151', measurement: '0,1 bis 2 ppm', strokes: '15', duration: 'ca. 7,5 min', color: 'gelb -> blaugrün', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Cyclohexylamin|Cyclohexylamin': { page: '155', measurement: 'Handbuch: 2 bis 30 ppm mit 2/a', strokes: '10', duration: 'ca. 4 min', color: 'gelb -> blau', interference: 'Bestandskennung ohne Typenbezeichnung; vor Einsatz prüfen.' },
+            'Epichlorhydrin|5/c': { page: '161', measurement: '5 bis 80 ppm', strokes: '20', duration: 'ca. 8 min', color: 'hellgrau -> gelborange', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Ethylenoxid|1/a': { page: '171', measurement: '1 bis 15 ppm', strokes: '20', duration: 'ca. 8 min', color: 'weiß -> rosa', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Fluorwasserstoff|0,5/a': { page: '175', measurement: '0,5 bis 15 ppm / 10 bis 90 ppm', strokes: '10 / 2', duration: 'ca. 2 min / ca. 25 s', color: 'blauviolett -> gelb', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Formaldehyd|0,2/a': { page: '177', measurement: '0,5 bis 5 ppm / 0,2 bis 2,5 ppm', strokes: '10 / 20', duration: 'ca. 1,5 min / ca. 3 min', color: 'weiß -> rosa', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Halogen-Kohlenwasserstoffe|100/a': { page: '179', measurement: 'Handbuch: 200 bis 2600 ppm R113/R114; 100 bis 1400 ppm R11', strokes: '3', duration: 'ca. 1 min', color: 'blau -> gelb bis graugrün', interference: 'Verfärbung wird in mm abgelesen und mit einem Kalibrier-Datenblatt abgeglichen.' },
+            'Kohlenstoffmonoxid|10/b': { page: '192', measurement: '10 bis 300 ppm / 100 bis 3000 ppm', strokes: '4 / 1', duration: 'ca. 4 min / ca. 20 s', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Methanol|20/a': { page: '199', measurement: '20 bis 250 ppm / 200 bis 5000 ppm', strokes: '6 / 2', duration: 'siehe Handbuch', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Perchlorethylen|2/a': { page: '214', measurement: '20 bis 300 ppm / 2 bis 40 ppm', strokes: '1 / 5', duration: 'ca. 30 s / ca. 3 min', color: 'gelb -> graublau', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Phosgen|0,25/c': { page: '218', measurement: '0,25 bis 5 ppm', strokes: '1', duration: 'ca. 1 min', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Salzsäure|0,2/a': { page: '231', measurement: '0,2 bis 3 ppm / 3 bis 20 ppm', strokes: '2 / 1', duration: 'ca. 2 min / ca. 40 s', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Schwefeldioxid|0,5/a': { page: '238', measurement: '1 bis 25 ppm / 0,5 bis 5 ppm', strokes: '10 / 20', duration: 'ca. 3 min / ca. 6 min', color: 'graublau -> weiß', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Styrol|10/b': { page: '261', measurement: '10 bis 250 ppm', strokes: '3', duration: 'ca. 3 min', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Tetrachlorkohlenstoff|1/a': { page: '266', measurement: '1 bis 15 ppm / 10 bis 50 ppm', strokes: '5 / 1', duration: 'ca. 10 min / ca. 5 min', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Thiother|Thiother': { page: '301', measurement: '1 mg/m3 Schwellenwert', strokes: 'siehe Handbuch', duration: 'siehe Handbuch', color: 'siehe Handbuch', interference: 'Bestandsbezeichnung im Handbuch als Thioether geführt.' },
+            'Toluol|100/a': { page: '270', measurement: '100 bis 1800 ppm', strokes: '10', duration: 'ca. 1,5 min', color: 'weiß -> braunviolett', interference: 'siehe aktuelle Gebrauchsanweisung' },
+            'Trichlorethan|50/d': { page: '272', measurement: '50 bis 600 ppm', strokes: '2', duration: 'ca. 2 min', color: 'siehe Handbuch', interference: 'siehe aktuelle Gebrauchsanweisung' }
+        };
 
         function escapeHtml(value) {
             return value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
         }
 
+        function escapeRegExp(value) {
+            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function findHandbookDetails(tube) {
+            const names = tube.name === 'Acrylonitril' ? ['Acrylnitril', 'Acrylonitril'] : [tube.name];
+            const namePattern = names.map(escapeRegExp).join('|');
+            const codePattern = escapeRegExp(tube.code);
+            const heading = new RegExp(`^(${namePattern})\\s+${codePattern}\\s*$`, 'mi');
+            const match = heading.exec(handbook);
+            if (!match) return null;
+            const pageStart = handbook.lastIndexOf('## Seite ', match.index);
+            const pageEnd = handbook.indexOf('## Seite ', match.index + match[0].length);
+            const block = handbook.slice(match.index, pageEnd === -1 ? handbook.length : pageEnd);
+            const pageMatch = handbook.slice(pageStart, match.index).match(/## Seite (\d+)/);
+            const field = (label) => {
+                const value = block.match(new RegExp(`${label}:\\s*([^\\n]+(?:\\n(?!\\S)[^\\n]+)*)`, 'i'));
+                return value ? value[1].replace(/\s+/g, ' ').trim() : 'nicht angegeben';
+            };
+            const interference = block.match(/Querempfindlichkeit\s*([\s\S]*?)(?=\n\s*D-[0-9]|$)/i);
+            return {
+                page: pageMatch ? pageMatch[1] : 'nicht ermittelt',
+                measurement: field('Standardmessbereich'),
+                strokes: field('Hubzahl n'),
+                duration: field('Dauer der Messung'),
+                color: field('Farbumschlag'),
+                interference: interference ? interference[1].replace(/\s+/g, ' ').trim() : 'siehe Handbuch'
+            };
+        }
+
         function renderSelection() {
             const tube = tubes[Number(tubeSelect.value)];
+            const details = tube ? (embeddedDetails[`${tube.name}|${tube.code}`] || findHandbookDetails(tube)) : null;
             results.innerHTML = tube
-                ? `<div class="result"><strong>${escapeHtml(tube.name)}</strong><small>Röhrchenkennung: ${escapeHtml(tube.code)} | Status: ${escapeHtml(tube.status)}</small><small>Weitere Messdaten bitte im aktuellen Dräger-Handbuch prüfen.</small></div>`
+                ? `<div class="result"><strong>${escapeHtml(tube.name)} (${escapeHtml(tube.code)})</strong><small>Status: ${escapeHtml(tube.status)} | Handbuchseite: ${details ? escapeHtml(details.page) : 'nicht gefunden'}</small>${details ? `<small>Messbereich: ${escapeHtml(details.measurement)}</small><small>Hübe: ${escapeHtml(details.strokes)} | Messdauer: ${escapeHtml(details.duration)}</small><small>Farbumschlag: ${escapeHtml(details.color)}</small><small>Querempfindlichkeiten: ${escapeHtml(details.interference)}</small>` : '<small>Kein passender Detailblock im Handbuch gefunden. Röhrchenkennung und Schreibweise bitte prüfen.</small>'}</div>`
                 : '<p>Bitte ein Prüfröhrchen auswählen.</p>';
         }
 
@@ -92,20 +164,24 @@
             });
         }
 
-        fetch('Draeger-Pruefrohrchen.md')
-            .then((response) => response.ok ? response.text() : Promise.reject(new Error('Markdown-Datei nicht gefunden.')))
-            .then((markdown) => {
+        tubes = embeddedTubes;
+        populateOptions();
+        renderSelection();
+
+        Promise.all(['Draeger-Pruefrohrchen.md', 'Draeger-Roehrchen-und-Microtubes-21.md'].map((file) => fetch(file).then((response) => response.ok ? response.text() : Promise.reject(new Error(`${file} nicht gefunden.`)))))
+            .then(([markdown, handbookMarkdown]) => {
+                handbook = handbookMarkdown;
                 tubes = markdown.split('\n').slice(2).map((line) => {
                     const cells = line.match(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$/);
                     return cells ? { name: cells[1], code: cells[2], status: cells[3] } : null;
                 }).filter((tube) => tube && tube.name !== 'Stoff / Bezeichnung' && !tube.name.startsWith('-'));
+                tubeSelect.innerHTML = '<option value="">Prüfröhrchen auswählen ...</option>';
                 populateOptions();
                 renderSelection();
             })
             .catch(() => {
-                tubes = fallbackTubes;
-                populateOptions();
-                results.innerHTML = '<p>Lokale Prüfröhrchen-Liste geladen.</p>';
+                handbook = '';
+                results.innerHTML = '<p>Eingebettete Prüfröhrchen-Liste geladen. Zusätzliche Handbuchdaten sind offline verfügbar, sobald sie in die HTML-Datei übernommen wurden.</p>';
             });
 
         document.getElementById('searchForm').addEventListener('submit', (event) => {

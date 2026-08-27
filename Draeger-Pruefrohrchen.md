@@ -34,6 +34,50 @@ Diese Liste wurde aus der bereitgestellten Bestandsaufnahme übertragen. Die Rö
 | Trichlorethan | 50/d | vorhanden |
 | Tenax | noch zu bestätigen | ergänzen und prüfen |
 
+## Geprüfte Handbuchdaten
+
+### Acrylonitril
+
+- Bestandskennung: `0,5/a`
+- Handbuchbezeichnung: `Acrylnitril 0,2/a`
+- Bestellnummer: `81 03 701`
+- Handbuchseite: `124`
+- Standardmessbereich: `0,2 bis 4 ppm / 5 bis 50 ppm`
+- Hubzahl: `20 / 5`
+- Messdauer: `ca. 4 min / ca. 1 min`
+- Standardabweichung: `± 15 bis 20 %`
+- Farbumschlag: `gelb -> rot`
+- Temperatur: `5 bis 40 °C`
+- Feuchte: `1 bis 25 mg H2O/L`
+- Querempfindlichkeiten: Bei 500 ppm Ethanol, 1000 ppm n-Hexan oder 100 ppm Toluol wird Acrylnitril mit geringerer Empfindlichkeit angezeigt; eine Konzentrationsbestimmung ist dann nicht möglich. Bei 400 ppm Butadien wird die Anzeige weitgehend unterdrückt.
+- Hinweis: Bestandskennung und Handbuchkennung weichen ab und müssen vor Verwendung geklärt werden.
+
+### Amin-Test
+
+- Bestellnummer: `81 01 061`
+- Handbuchseite: `126`
+- Standardmessbereich: Qualitative Bestimmung von basisch reagierenden Gasen
+- Hubzahl: `1`
+- Messdauer: `ca. 5 s`
+- Standardabweichung: `± 30 %`
+- Farbumschlag: `gelb -> blau`
+- Temperatur: `0 bis 40 °C`
+- Feuchte: `3 bis 15 mg H2O/L`
+- Querempfindlichkeiten: Unspezifischer Nachweis basisch reagierender Gase; eine Differenzierung ist nicht möglich.
+
+### Arsenwasserstoff
+
+- Bestellnummer: `CH 25 001`
+- Handbuchseite: `133`
+- Standardmessbereich: `0,05 bis 3 ppm`
+- Hubzahl: `20`
+- Messdauer: `ca. 6 min`
+- Standardabweichung: `± 15 bis 20 %`
+- Farbumschlag: `weiß -> grauviolett`
+- Temperatur: `0 bis 40 °C`
+- Feuchte: `max. 40 mg H2O/L`
+- Querempfindlichkeiten: Phosphorwasserstoff und Antimonwasserstoff werden ebenfalls angezeigt, mit unterschiedlicher Empfindlichkeit.
+
 ## Prüfhinweis
 
 Diese Übersicht ist eine Bestands- und Suchhilfe. Sie ersetzt nicht die aktuelle Dräger-Gebrauchsanweisung oder eine fachliche Freigabe. Vor dem Einsatz sind insbesondere Röhrchentyp, Messbereich, Probenahme, Messdauer, Querempfindlichkeiten, Haltbarkeit und Lagerbedingungen anhand der Originalunterlagen zu prüfen.
