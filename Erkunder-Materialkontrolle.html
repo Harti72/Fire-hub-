@@ -146,7 +146,7 @@
 			<div class="item-top">
 				<div>
 					<div class="eyebrow" id="chapterName"></div>
-					<h2 class="position" id="position"></h2>
+					<h2 class="position" id="position" tabindex="-1"></h2>
 					<p class="material" id="material"></p>
 					<span class="expected" id="expected"></span>
 				</div>
@@ -351,10 +351,14 @@
 					currentIndex = nextOpen;
 					render();
 					setMessage(`${message} Nächste Position: ${items[currentIndex].position}.`, 'success');
+					$('#position').focus({ preventScroll: true });
+					workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
 					return;
 				}
 				render();
 				setMessage('Prüfung abgeschlossen. Alle Positionen wurden kontrolliert. Du kannst das Ergebnis jetzt exportieren.', 'success');
+				appStatus.focus({ preventScroll: true });
+				workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}
 
 			function confirmPosition() {
@@ -480,6 +484,12 @@
 			$('#confirmButton').addEventListener('click', confirmPosition);
 			$('#showDeviationButton').addEventListener('click', openDeviation);
 			$('#saveDeviationButton').addEventListener('click', saveDeviation);
+			[actualInput, remarkInput].forEach((input) => input.addEventListener('keydown', (event) => {
+				if (event.key === 'Enter' && deviationOpen) {
+					event.preventDefault();
+					saveDeviation();
+				}
+			}));
 			$('#previousButton').addEventListener('click', () => goTo(currentIndex - 1));
 			$('#nextButton').addEventListener('click', () => goTo(currentIndex + 1));
 			itemSelect.addEventListener('change', () => goTo(Number(itemSelect.value), false));
