@@ -58,6 +58,9 @@
 		.meta-row .field { flex: 1 1 220px; }
 		.progress-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .93rem; }
 		progress { display: block; width: 100%; height: 12px; margin-top: 8px; accent-color: var(--good); }
+		.run-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+		.run-controls .field { flex: 1 1 260px; }
+		.run-controls button { min-height: 45px; }
 		.chapter-nav { margin-top: 12px; }
 		.chapter-nav label { display: block; margin-bottom: 5px; font-size: .88rem; font-weight: 700; }
 		.chapter-nav select { min-height: 45px; width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; background: #fff; color: var(--ink); font: inherit; }
@@ -100,6 +103,7 @@
 			.navigation { align-items: stretch; }
 			.nav-group { flex: 1 1 100%; }
 			.nav-group button { flex: 1; }
+			.run-controls button { width: 100%; }
 		}
 		@media print {
 			body { background: #fff; }
@@ -133,7 +137,7 @@
 				<label class="file-button">Markdown-Datei auswählen<input id="fileInput" type="file" accept=".md,text/markdown,text/plain"></label>
 				<span id="fileName" class="file-name" aria-live="polite">Noch keine Datei geladen</span>
 			</div>
-			<p class="notice">Die Datei wird nur lokal im Browser eingelesen. Prüfergebnisse bleiben auf diesem Gerät und können als Markdown oder CSV exportiert werden. Exportdateien enthalten Prüfdatum und Prüfername im Dateinamen.</p>
+			<p class="notice">Die Datei wird nur lokal im Browser eingelesen. Prüfergebnisse bleiben auf diesem Gerät; du kannst mehrere getrennte Prüfläufe pro Plan anlegen und als Markdown oder CSV exportieren. Exportdateien enthalten Prüfdatum und Prüfername im Dateinamen.</p>
 			<div class="meta-row">
 				<div class="field"><label for="inspector">Prüfer/in</label><input id="inspector" autocomplete="name" placeholder="Name (optional)"></div>
 				<div class="field"><label for="inspectionDate">Prüfdatum</label><input id="inspectionDate" type="date"></div>
@@ -146,6 +150,13 @@
 			<div class="chapter-nav">
 				<label for="chapterSelect">Kapitelübersicht – direkt zum Kapitel springen</label>
 				<select id="chapterSelect" aria-label="Kapitel auswählen"></select>
+			</div>
+			<div class="run-controls">
+				<div class="field">
+					<label for="runSelect">Prüflauf für diesen Plan</label>
+					<select id="runSelect" aria-label="Gespeicherten Prüflauf auswählen"></select>
+				</div>
+				<button id="newRunButton" type="button">＋ Neuen leeren Prüflauf starten</button>
 			</div>
 		</section>
 
@@ -186,7 +197,7 @@
 			<button type="button" id="markdownButton">↓ Ergebnis als Markdown</button>
 			<button type="button" id="csvButton">↓ Ergebnis als CSV</button>
 			<button type="button" id="printButton">🖨 Drucken / PDF</button>
-			<button type="button" id="resetButton">Prüfstand zurücksetzen</button>
+			<button type="button" id="resetButton">Diesen Prüflauf zurücksetzen</button>
 		</section>
 		<section id="printReport" hidden aria-label="Druckbericht"></section>
 	</main>
@@ -207,6 +218,7 @@
 			const deviationPanel = $('#deviationPanel');
 			const itemSelect = $('#itemSelect');
 			const chapterSelect = $('#chapterSelect');
+			const runSelect = $('#runSelect');
 			const actualInput = $('#actual');
 			const remarkInput = $('#remark');
 			const inspectorInput = $('#inspector');
@@ -214,6 +226,10 @@
 			let items = [];
 			let currentIndex = 0;
 			let deviationOpen = false;
+			let planKey = '';
+			let currentRunId = '';
+			let runs = [];
+			let legacyProgress = null;
 
 			function setMessage(message, kind = '') {
 				appStatus.textContent = message;
@@ -237,26 +253,115 @@
 				}
 			}
 
-			function saveProgress() {
+			function makeRunId() {
+				return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+			}
+
+			function makePlanKey() {
+				const source = JSON.stringify(items.map(({ chapter, group, position, material, target }) => [chapter, group, position, material, target]));
+				let hash = 2166136261;
+				for (let index = 0; index < source.length; index++) {
+					hash ^= source.charCodeAt(index);
+					hash = Math.imul(hash, 16777619);
+				}
+				return `${items.length}-${(hash >>> 0).toString(16)}`;
+			}
+
+			function readRunStore() {
+				try {
+					const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+					if (saved?.version === 2 && Array.isArray(saved.runs)) {
+						runs = saved.runs;
+						legacyProgress = saved.legacyProgress || null;
+					} else if (saved?.progress) {
+						// Older app versions stored one run without identifying its checklist.
+						runs = [];
+						legacyProgress = saved;
+					} else {
+						runs = [];
+						legacyProgress = null;
+					}
+				} catch {
+					runs = [];
+					legacyProgress = null;
+				}
+			}
+
+			function persistRunStore() {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 2, runs, legacyProgress }));
+			}
+
+			function makeRun(key, values = {}) {
+				const now = new Date().toISOString();
+				return {
+					id: makeRunId(), planKey: key, createdAt: now, updatedAt: now,
+					inspector: values.inspector || '', date: values.date || new Date().toISOString().slice(0, 10),
+					progress: values.progress || {}
+				};
+			}
+
+			function refreshRunSelector() {
 				if (!items.length) return;
-				const progress = Object.fromEntries(items.map((item) => [item.position, {
+				const planRuns = runs.filter((run) => run.planKey === planKey).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+				runSelect.replaceChildren();
+				for (const run of planRuns) {
+					const completed = items.filter((item) => Boolean(run.progress?.[item.position]?.status)).length;
+					const dateLabel = run.date || new Date(run.createdAt).toLocaleDateString('de-DE');
+					const timeLabel = new Date(run.createdAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+					const option = document.createElement('option');
+					option.value = run.id;
+					option.textContent = `${dateLabel}, ${timeLabel} · ${run.inspector.trim() || 'Ohne Prüfer'} · ${completed}/${items.length}`;
+					runSelect.append(option);
+				}
+				runSelect.value = currentRunId;
+			}
+
+			function saveProgress() {
+				if (!items.length || !currentRunId) return;
+				const run = runs.find((entry) => entry.id === currentRunId);
+				if (!run) return;
+				run.progress = Object.fromEntries(items.map((item) => [item.position, {
 					status: item.status || '', actual: item.actual || '', remark: item.remark || ''
 				}]));
+				run.inspector = inspectorInput.value;
+				run.date = dateInput.value;
+				run.updatedAt = new Date().toISOString();
 				try {
-					localStorage.setItem(STORAGE_KEY, JSON.stringify({
-						progress, inspector: inspectorInput.value, date: dateInput.value
-					}));
+					persistRunStore();
+					refreshRunSelector();
 				} catch {
 					setMessage('Speichern im Browser nicht möglich. Bitte Prüfung regelmäßig exportieren.', 'error');
 				}
 			}
 
-			function readSavedProgress() {
-				try {
-					return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-				} catch {
-					return null;
+			function applyRun(run) {
+				currentRunId = run.id;
+				inspectorInput.value = run.inspector || '';
+				dateInput.value = run.date || new Date().toISOString().slice(0, 10);
+				for (const item of items) {
+					item.status = '';
+					item.actual = '';
+					item.remark = '';
+					const saved = run.progress?.[item.position];
+					if (saved) Object.assign(item, saved);
 				}
+				const firstOpen = items.findIndex((item) => !item.status);
+				currentIndex = firstOpen < 0 ? items.length - 1 : firstOpen;
+				deviationOpen = false;
+				render();
+				refreshRunSelector();
+			}
+
+			function startNewRun() {
+				if (!items.length) return;
+				saveProgress();
+				const run = makeRun(planKey, { inspector: inspectorInput.value.trim() });
+				runs.push(run);
+				applyRun(run);
+				saveProgress();
+				setMessage('Neuer leerer Prüflauf gestartet. Der vorherige Lauf bleibt gespeichert und kann oben wieder ausgewählt werden.', 'success');
+				$('#position').focus({ preventScroll: true });
+				workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}
 
 			function parseMarkdown(text) {
@@ -289,26 +394,32 @@
 			function loadMarkdown(text, name) {
 				try {
 					items = parseMarkdown(text);
-					const saved = readSavedProgress();
-					if (saved) {
-						inspectorInput.value = saved.inspector || '';
-						dateInput.value = saved.date || dateInput.value;
-						for (const item of items) {
-							const previous = saved.progress?.[item.position];
-							if (previous) Object.assign(item, previous);
+					planKey = makePlanKey();
+					readRunStore();
+					if (legacyProgress) {
+						const oldPositions = Object.keys(legacyProgress.progress || {});
+						const samePlan = oldPositions.length === items.length && items.every((item) => Object.hasOwn(legacyProgress.progress, item.position));
+						if (samePlan) {
+							runs.push(makeRun(planKey, legacyProgress));
+							legacyProgress = null;
 						}
 					}
-					const firstOpen = items.findIndex((item) => !item.status);
-					currentIndex = firstOpen < 0 ? items.length - 1 : firstOpen;
+					let planRuns = runs.filter((run) => run.planKey === planKey);
+					if (!planRuns.length) {
+						const newRun = makeRun(planKey);
+						runs.push(newRun);
+						planRuns = [newRun];
+					}
+					const run = [...planRuns].sort((a, b) => (b.updatedAt || b.createdAt).localeCompare(a.updatedAt || a.createdAt))[0];
 					fileName.textContent = `${name} · ${items.length} Positionen`;
 					progressPanel.hidden = false;
 					workspace.hidden = false;
 					exportPanel.hidden = false;
 					fillPositionSelector();
 					fillChapterSelector();
-					render();
+					applyRun(run);
 					saveProgress();
-					setMessage(firstOpen < 0 ? 'Alle Positionen dieser Checkliste sind bereits geprüft.' : 'Bereit. Mit „Passt – bestätigen & weiter“ die angezeigte Position abhaken.', 'success');
+					setMessage('Prüfliste geladen. Du kannst einen gespeicherten Lauf fortsetzen oder einen neuen leeren Lauf starten.', 'success');
 				} catch (error) {
 					setMessage(error.message, 'error');
 				}
@@ -518,6 +629,15 @@
 			$('#confirmButton').addEventListener('click', confirmPosition);
 			$('#showDeviationButton').addEventListener('click', openDeviation);
 			$('#saveDeviationButton').addEventListener('click', saveDeviation);
+			$('#newRunButton').addEventListener('click', startNewRun);
+			runSelect.addEventListener('change', () => {
+				const selectedRunId = runSelect.value;
+				saveProgress();
+				const run = runs.find((entry) => entry.id === selectedRunId && entry.planKey === planKey);
+				if (!run) return;
+				applyRun(run);
+				setMessage(`Prüflauf vom ${run.date || 'unbekannten Datum'} geladen.`, 'success');
+			});
 			[actualInput, remarkInput].forEach((input) => input.addEventListener('keydown', (event) => {
 				if (event.key === 'Enter' && deviationOpen) {
 					event.preventDefault();
@@ -545,14 +665,13 @@
 			$('#csvButton').addEventListener('click', exportCsv);
 			$('#printButton').addEventListener('click', printReport);
 			$('#resetButton').addEventListener('click', () => {
-				if (!window.confirm('Alle gespeicherten Prüfergebnisse auf diesem Gerät löschen?')) return;
-				localStorage.removeItem(STORAGE_KEY);
+				if (!window.confirm('Diesen Prüflauf zurücksetzen? Andere gespeicherte Läufe bleiben erhalten.')) return;
 				for (const item of items) { item.status = ''; item.actual = ''; item.remark = ''; }
-				inspectorInput.value = '';
 				currentIndex = 0;
 				deviationOpen = false;
 				render();
-				setMessage('Prüfstand zurückgesetzt.', 'success');
+				saveProgress();
+				setMessage('Dieser Prüflauf wurde zurückgesetzt. Andere Läufe bleiben gespeichert.', 'success');
 			});
 			dateInput.value = new Date().toISOString().slice(0, 10);
 		})();
