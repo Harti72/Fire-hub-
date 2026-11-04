@@ -6,7 +6,7 @@ Digitale Startoberfläche für Feuerwehr, Erkunder-Arbeitsplatz und CBRN-/ABC-Ei
 
 - [Feuerwehr HUB](index.html) - zentrale Startseite für Alarm, Verwaltung, Kontakte, Einsatz-Tools und Warnungen
 - [Erkunder-Kiosk](Erkunder-Kiosk.html) - Offline-Startseite für den Erkunder-Arbeitsplatz
-- [Materialkontrolle Probenahme](Erkunder-Sprachcheckliste.html) - prüft Positionen aus einer lokal ausgewählten Markdown-Checkliste per Ein-Klick-Bestätigung
+- [Materialkontrolle Probenahme](Erkunder-Materialkontrolle.html) - prüft Positionen aus einer lokal ausgewählten Markdown-Checkliste per Ein-Klick-Bestätigung
 - [GitHub Pages](https://harti72.github.io/Fire-hub-/) - öffentlich erreichbare Startseite
 
 Der Erkunder-Kiosk bietet oben einen Online-/Offline-Schalter. Der Online-Modus zeigt alle Funktionen. Im Offline-Modus werden nur externe Web- und Mail-Links ausgeblendet; lokale Dateien, Ordner, Skripte und die Druckfunktion bleiben verfügbar.
