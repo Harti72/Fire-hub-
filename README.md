@@ -13,6 +13,10 @@ Der Erkunder-Kiosk bietet oben einen Online-/Offline-Schalter. Der Online-Modus 
 
 Die Materialkontrolle läuft ohne Server und externe Bibliotheken. Die MD-Datei wird lokal im Browser eingelesen; passende Positionen werden mit einem Klick bestätigt und die App springt automatisch weiter. Abweichungen lassen sich mit Ist-Menge und Bemerkung erfassen. Prüfergebnisse werden lokal gespeichert und können als Markdown oder CSV exportiert werden.
 
+## Copilot-Skill
+
+- [Erkunder-Checklisten](.github/skills/erkunder-checklisten/SKILL.md) - erstellt aus einer bereitgestellten Liste eine neue, app-kompatible MD-Checkliste und prüft Positionen und Tabellenformat.
+
 ## Konzept und Planung
 
 - [Erkunder-Arbeitsplatz-Konzept](Erkunder_Arbeitsplatz_Konzept.md) - technische und organisatorische Grundlage für den Linux-Arbeitsplatz
