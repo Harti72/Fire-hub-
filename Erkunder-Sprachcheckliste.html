@@ -4,8 +4,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="#18222c">
-	<meta name="description" content="Offline-fähige, sprachgeführte Materialkontrolle für den Erkunder. Checkliste lokal als Markdown laden.">
-	<title>Sprach-Checkliste | Erkunder</title>
+	<meta name="description" content="Einfache Materialkontrolle für den Erkunder. Checkliste lokal als Markdown laden und Positionen mit einem Klick bestätigen.">
+	<title>Materialkontrolle | Erkunder</title>
 	<style>
 		:root {
 			color-scheme: light;
@@ -45,12 +45,12 @@
 		.panel { margin-bottom: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: var(--shadow); }
 		.panel h2, .panel h3 { margin: 0 0 10px; }
 		.intro { color: var(--muted); margin: 0; }
-		.load-row, .meta-row, .toolbar, .navigation, .status-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+		.load-row, .meta-row, .toolbar, .navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 		.load-row { margin-top: 15px; }
 		.file-button { display: inline-flex; min-height: 48px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; background: #fff; font-weight: 650; cursor: pointer; }
 		.file-button input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
 		.file-name, .hint, .notice { color: var(--muted); font-size: .92rem; }
-		.notice { margin: 12px 0 0; padding: 10px 12px; border-left: 4px solid #b07a2a; background: #fbf7ef; }
+		.notice { margin: 12px 0 0; padding: 10px 12px; border-left: 4px solid #78909c; background: #f2f5f6; }
 		.meta-row { margin-top: 16px; }
 		.field { display: grid; gap: 5px; }
 		.field label { font-size: .88rem; font-weight: 700; }
@@ -70,13 +70,17 @@
 		.group-heading { margin: 28px 0 12px; font-size: 1.05rem; }
 		.qty-remark { display: grid; grid-template-columns: minmax(150px, .75fr) minmax(220px, 1.5fr); gap: 14px; margin-top: 22px; }
 		.qty-remark input { font-size: 1.1rem; }
-		.status-actions { margin-top: 16px; }
-		.status-actions button { flex: 1 1 150px; }
-		.voice-status { min-height: 52px; margin: 16px 0 0; padding: 12px 14px; border-radius: 9px; background: #edf1f3; color: #344652; }
-		.voice-status[data-kind="error"] { background: #fbefed; color: #812e29; }
-		.voice-status[data-kind="success"] { background: #edf6ef; color: #205b35; }
-		.transcript { margin: 7px 0 0; color: var(--muted); font-size: .9rem; overflow-wrap: anywhere; }
-		.navigation { justify-content: space-between; margin-top: 22px; }
+		.action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+		.action-row button { flex: 1 1 220px; min-height: 58px; font-size: 1.05rem; }
+		.deviation-panel { margin-top: 18px; padding: 16px; border: 1px solid #d5bd98; border-radius: 10px; background: #fbf8f2; }
+		.deviation-panel h3 { margin: 0 0 6px; }
+		.deviation-panel p { margin: 0 0 12px; color: var(--muted); }
+		.deviation-panel .qty-remark { margin-top: 12px; }
+		.deviation-panel > button { width: 100%; margin-top: 14px; }
+		.app-status { min-height: 28px; margin: 12px 0 0; color: var(--muted); }
+		.app-status[data-kind="error"] { color: var(--bad); }
+		.app-status[data-kind="success"] { color: var(--good); }
+		.navigation { justify-content: space-between; margin-top: 18px; }
 		.nav-group { display: flex; flex-wrap: wrap; gap: 10px; }
 		.toolbar { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
 		.toolbar button { flex: 1 1 160px; }
@@ -112,7 +116,7 @@
 		<div class="topbar-inner">
 			<a class="back" href="Erkunder-Kiosk.html">← Erkunder-Kiosk</a>
 			<div class="brand">
-				<h1>Sprachgeführte Materialkontrolle</h1>
+				<h1>Materialkontrolle</h1>
 				<p>Erkunder · Kater München Mitte 66/1</p>
 			</div>
 		</div>
@@ -121,12 +125,12 @@
 	<main>
 		<section class="panel" id="loader" aria-labelledby="loadTitle">
 			<h2 id="loadTitle">Checkliste laden</h2>
-			<p class="intro">Wähle die vorhandene Markdown-Checkliste aus. Sie wird nur in diesem Browser geöffnet und nicht an diese Website übertragen.</p>
+			<p class="intro">Markdown-Checkliste laden. Jede passende Position wird mit einem Klick bestätigt und die App springt automatisch weiter. Bei Abweichungen kannst du Ist-Menge und Bemerkung erfassen.</p>
 			<div class="load-row">
 				<label class="file-button">Markdown-Datei auswählen<input id="fileInput" type="file" accept=".md,text/markdown,text/plain"></label>
 				<span id="fileName" class="file-name" aria-live="polite">Noch keine Datei geladen</span>
 			</div>
-			<p class="notice"><strong>Hinweis zur Spracheingabe:</strong> Vorlesen funktioniert lokal. Die Mikrofon-Erkennung hängt vom Browser ab und kann Audio an einen Online-Spracherkennungsdienst senden. Manuelle Eingabe bleibt jederzeit möglich.</p>
+			<p class="notice">Die Datei wird nur lokal im Browser eingelesen. Prüfergebnisse bleiben auf diesem Gerät und können als Markdown oder CSV exportiert werden.</p>
 			<div class="meta-row">
 				<div class="field"><label for="inspector">Prüfer/in</label><input id="inspector" autocomplete="name" placeholder="Name (optional)"></div>
 				<div class="field"><label for="inspectionDate">Prüfdatum</label><input id="inspectionDate" type="date"></div>
@@ -151,30 +155,24 @@
 					<select id="itemSelect" aria-label="Position auswählen"></select>
 				</div>
 			</div>
-			<div class="qty-remark">
-				<div class="field"><label for="actual">Ist-Menge / Status</label><input id="actual" type="text" inputmode="decimal" placeholder="z. B. 2 oder vorhanden"></div>
-				<div class="field"><label for="remark">Bemerkung</label><input id="remark" type="text" placeholder="Optional: Zustand, Verfall, Abweichung …"></div>
+			<div class="action-row">
+				<button class="primary" id="confirmButton" type="button">✓ Passt – bestätigen &amp; weiter</button>
+				<button id="showDeviationButton" type="button">Abweichung erfassen</button>
 			</div>
-			<h3 class="group-heading">Prüfergebnis</h3>
-			<div class="status-actions" role="group" aria-label="Prüfergebnis">
-				<button class="good" type="button" data-status="present">✓ Vorhanden</button>
-				<button class="bad" type="button" data-status="missing">✕ Fehlt</button>
-				<button type="button" data-status="open">○ Noch offen</button>
-			</div>
-			<p id="voiceStatus" class="voice-status" role="status" aria-live="polite">Checkliste laden, dann „Prüfung starten“ wählen.</p>
-			<p id="transcript" class="transcript" hidden></p>
+			<section class="deviation-panel" id="deviationPanel" hidden aria-labelledby="deviationTitle">
+				<h3 id="deviationTitle">Abweichung dokumentieren</h3>
+				<p>Ist-Menge prüfen und bei Bedarf eine Bemerkung ergänzen. Danach zur nächsten Position wechseln.</p>
+				<div class="qty-remark">
+					<div class="field"><label for="actual">Ist-Menge / Status</label><input id="actual" type="text" inputmode="decimal" placeholder="z. B. 0 oder vorhanden"></div>
+					<div class="field"><label for="remark">Bemerkung (optional)</label><input id="remark" type="text" placeholder="z. B. beschädigt, abgelaufen …"></div>
+				</div>
+				<button class="primary" id="saveDeviationButton" type="button">Abweichung speichern &amp; weiter</button>
+			</section>
+			<p id="appStatus" class="app-status" role="status" aria-live="polite">Markdown-Checkliste laden, um zu beginnen.</p>
 			<div class="navigation">
-				<div class="nav-group">
-					<button id="previousButton" type="button" aria-label="Vorherige Position">← Zurück</button>
-					<button id="speakButton" type="button">🔊 Wiederholen</button>
-				</div>
-				<div class="nav-group">
-					<button class="primary" id="startButton" type="button">▶ Prüfung starten</button>
-					<button class="primary" id="micButton" type="button" disabled>🎙️ Sprechen</button>
-					<button id="nextButton" type="button">Weiter →</button>
-				</div>
+				<button id="previousButton" type="button" aria-label="Vorherige Position">← Zurück</button>
+				<button id="nextButton" type="button">Position überspringen →</button>
 			</div>
-			<p class="hint">Sprachbefehle: „vorhanden“, „fehlt“, eine Zahl als Ist-Menge, „Bemerkung …“, „weiter“, „zurück“ oder „wiederholen“.</p>
 		</section>
 
 		<section class="panel toolbar" id="exportPanel" hidden aria-label="Prüfung speichern oder exportieren">
@@ -186,7 +184,7 @@
 		<section id="printReport" hidden aria-label="Druckbericht"></section>
 	</main>
 
-	<footer>Prototyp · Ohne Server und ohne externe Bibliotheken · Prüfergebnisse werden lokal im Browser gespeichert.</footer>
+	<footer>Offline-fähige App · Ohne Spracheingabe, Server oder externe Bibliotheken · Prüfergebnisse werden lokal im Browser gespeichert.</footer>
 
 	<script>
 		(() => {
@@ -198,23 +196,20 @@
 			const progressPanel = $('#progressPanel');
 			const workspace = $('#workspace');
 			const exportPanel = $('#exportPanel');
-			const voiceStatus = $('#voiceStatus');
-			const transcript = $('#transcript');
+			const appStatus = $('#appStatus');
+			const deviationPanel = $('#deviationPanel');
 			const itemSelect = $('#itemSelect');
 			const actualInput = $('#actual');
 			const remarkInput = $('#remark');
 			const inspectorInput = $('#inspector');
 			const dateInput = $('#inspectionDate');
-			const recognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
 			let items = [];
 			let currentIndex = 0;
-			let recognition = null;
-			let recognitionBusy = false;
-			let started = false;
+			let deviationOpen = false;
 
-			function announce(message, kind = '') {
-				voiceStatus.textContent = message;
-				voiceStatus.dataset.kind = kind;
+			function setMessage(message, kind = '') {
+				appStatus.textContent = message;
+				appStatus.dataset.kind = kind;
 			}
 
 			function saveProgress() {
@@ -227,7 +222,7 @@
 						progress, inspector: inspectorInput.value, date: dateInput.value
 					}));
 				} catch {
-					announce('Speichern im Browser nicht möglich. Bitte Prüfung regelmäßig exportieren.', 'error');
+					setMessage('Speichern im Browser nicht möglich. Bitte Prüfung regelmäßig exportieren.', 'error');
 				}
 			}
 
@@ -274,24 +269,22 @@
 						inspectorInput.value = saved.inspector || '';
 						dateInput.value = saved.date || dateInput.value;
 						for (const item of items) {
-						const previous = saved.progress?.[item.position];
-						if (previous) Object.assign(item, previous);
+							const previous = saved.progress?.[item.position];
+							if (previous) Object.assign(item, previous);
+						}
 					}
 					const firstOpen = items.findIndex((item) => !item.status);
-					currentIndex = firstOpen < 0 ? 0 : firstOpen;
-				}
+					currentIndex = firstOpen < 0 ? items.length - 1 : firstOpen;
 					fileName.textContent = `${name} · ${items.length} Positionen`;
 					progressPanel.hidden = false;
 					workspace.hidden = false;
 					exportPanel.hidden = false;
-					$('#micButton').disabled = !recognitionConstructor;
-					if (!recognitionConstructor) announce('Spracherkennung ist in diesem Browser nicht verfügbar. Vorlesen und manuelle Eingabe funktionieren weiterhin.');
-					else announce('Checkliste geladen. „Prüfung starten“ liest die erste offene Position vor.', 'success');
 					fillPositionSelector();
 					render();
 					saveProgress();
+					setMessage(firstOpen < 0 ? 'Alle Positionen dieser Checkliste sind bereits geprüft.' : 'Bereit. Mit „Passt – bestätigen & weiter“ die angezeigte Position abhaken.', 'success');
 				} catch (error) {
-					announce(error.message, 'error');
+					setMessage(error.message, 'error');
 				}
 			}
 
@@ -332,6 +325,7 @@
 				itemSelect.value = String(currentIndex);
 				$('#previousButton').disabled = currentIndex === 0;
 				$('#nextButton').disabled = currentIndex === items.length - 1;
+				deviationPanel.hidden = !deviationOpen;
 				updateProgress();
 			}
 
@@ -342,136 +336,67 @@
 				saveProgress();
 			}
 
-			function goTo(index, shouldSpeak = false) {
+			function goTo(index) {
 				persistCurrent();
 				currentIndex = Math.max(0, Math.min(items.length - 1, index));
+				deviationOpen = false;
 				render();
-				if (shouldSpeak) speakCurrent();
 			}
 
-			function promptFor(item) {
-				return `${item.chapter}. ${item.group}. Position ${item.position}: ${item.material}. Soll ${item.target}. Bitte Stückzahl nennen oder sagen: vorhanden, fehlt, Bemerkung, weiter, zurück oder wiederholen.`;
-			}
-
-			function speak(text, onEnd) {
-				if (!('speechSynthesis' in window)) {
-					announce('Sprachausgabe wird von diesem Browser nicht unterstützt. Du kannst die Position manuell lesen.', 'error');
+			function advanceAfterSave(message) {
+				deviationOpen = false;
+				let nextOpen = items.findIndex((item, index) => index > currentIndex && !item.status);
+				if (nextOpen < 0) nextOpen = items.findIndex((item, index) => index <= currentIndex && !item.status);
+				if (nextOpen >= 0) {
+					currentIndex = nextOpen;
+					render();
+					setMessage(`${message} Nächste Position: ${items[currentIndex].position}.`, 'success');
 					return;
 				}
-				window.speechSynthesis.cancel();
-				const utterance = new SpeechSynthesisUtterance(text);
-				utterance.lang = 'de-DE';
-				utterance.rate = 0.92;
-				utterance.onend = () => { if (onEnd) onEnd(); };
-				utterance.onerror = () => announce('Die Sprachausgabe konnte nicht gestartet werden. Bitte Position manuell lesen.', 'error');
-				window.speechSynthesis.speak(utterance);
+				render();
+				setMessage('Prüfung abgeschlossen. Alle Positionen wurden kontrolliert. Du kannst das Ergebnis jetzt exportieren.', 'success');
 			}
 
-			function speakCurrent() {
-				if (!items.length) return;
-				started = true;
-				$('#startButton').textContent = '▶ Position vorlesen';
-				announce('Position wird vorgelesen. Anschließend Menge einsprechen oder manuell eintragen.');
-				speak(promptFor(items[currentIndex]));
-			}
-
-			function setStatus(status) {
+			function confirmPosition() {
 				if (!items.length) return;
 				const item = items[currentIndex];
-				item.status = status;
-				if (status === 'missing') {
-					item.actual = '0';
-					actualInput.value = '0';
-				} else if (status === 'present' && !actualInput.value.trim() && /^\d+$/.test(item.target)) {
-					item.actual = item.target;
-					actualInput.value = item.target;
-				}
-				persistCurrent();
+				item.actual = /^\d+(?:[,.]\d+)?$/.test(item.target) ? item.target : 'vorhanden';
+				item.status = 'present';
+				saveProgress();
+				advanceAfterSave(`Position ${item.position} bestätigt.`);
+			}
+
+			function openDeviation() {
+				const item = items[currentIndex];
+				deviationOpen = true;
 				render();
-				announce(status === 'present' ? 'Als vorhanden gespeichert.' : status === 'missing' ? 'Als fehlend gespeichert; Ist-Menge 0.' : 'Position wieder als offen markiert.', 'success');
+				actualInput.value = item.status === 'deviation' || item.status === 'missing' ? item.actual || '' : '';
+				remarkInput.value = item.remark || '';
+				actualInput.focus();
 			}
 
-			const smallNumbers = {
-				null: 0, kein: 0, keine: 0, eins: 1, eine: 1, einer: 1, ein: 1,
-				zwei: 2, drei: 3, vier: 4, funf: 5, sechs: 6, sieben: 7, acht: 8, neun: 9,
-				zehn: 10, elf: 11, zwolf: 12, dreizehn: 13, vierzehn: 14, funfzehn: 15,
-				sechzehn: 16, siebzehn: 17, achtzehn: 18, neunzehn: 19, zwanzig: 20,
-				dreissig: 30, vierzig: 40, funfzig: 50, sechzig: 60, siebzig: 70,
-				achtzig: 80, neunzig: 90, hundert: 100
-			};
-
-			function extractNumber(text) {
-				const digits = text.match(/\b\d+(?:[,.]\d+)?\b/);
-				if (digits) return digits[0].replace(',', '.');
-				const words = text.toLocaleLowerCase('de-DE').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').split(/[^a-z]+/).filter(Boolean);
-				for (const word of words) {
-					if (Object.hasOwn(smallNumbers, word)) return String(smallNumbers[word]);
-					if (word.includes('und')) {
-						const [ones, tens] = word.split('und');
-						if (Object.hasOwn(smallNumbers, ones) && Object.hasOwn(smallNumbers, tens) && smallNumbers[ones] < 10 && smallNumbers[tens] >= 20) return String(smallNumbers[tens] + smallNumbers[ones]);
-					}
-				}
-				return null;
-			}
-
-			function handleSpeech(rawText) {
-				const text = rawText.trim().toLocaleLowerCase('de-DE');
-				transcript.hidden = false;
-				transcript.textContent = `Erkannt: „${rawText}“`;
-				if (/\b(wiederholen|noch mal|nochmal|wiederhole)\b/.test(text)) { speakCurrent(); return; }
-				if (/\b(zurueck|zurück|vorherige position)\b/.test(text)) { goTo(currentIndex - 1, true); return; }
-				if (/\b(weiter|naechste position|nächste position)\b/.test(text)) { goTo(currentIndex + 1, true); return; }
-				if (/\b(pause|stopp|stop)\b/.test(text)) { window.speechSynthesis?.cancel(); announce('Vorlesen pausiert.'); return; }
-				if (/\b(bemerkung|notiz)\b/.test(text)) {
-					const note = rawText.replace(/^.*?\b(bemerkung|notiz)\b\s*/i, '').trim();
-					if (note) { remarkInput.value = note; persistCurrent(); announce(`Bemerkung gespeichert: ${note}`, 'success'); }
-					else announce('Bitte nach „Bemerkung“ den Text sprechen.');
+			function saveDeviation() {
+				const item = items[currentIndex];
+				const actual = actualInput.value.trim();
+				if (!actual) {
+					setMessage('Bitte Ist-Menge oder Status eintragen. Für fehlende Stückzahl „0“ eintragen.', 'error');
+					actualInput.focus();
 					return;
 				}
-				if (/\b(fehlt|nicht vorhanden)\b/.test(text)) { setStatus('missing'); return; }
-				if (/\b(vorhanden|vollstaendig|vollständig|komplett)\b/.test(text)) { setStatus('present'); return; }
-				const amount = extractNumber(text);
-				if (amount !== null) {
-					actualInput.value = amount;
-					const expected = Number(items[currentIndex].target);
-					items[currentIndex].status = amount === '0' ? 'missing' : Number.isFinite(expected) && Number(amount) < expected ? '' : 'present';
-					persistCurrent();
-					render();
-					announce(`Ist-Menge ${amount} gespeichert.${items[currentIndex].status ? ' Als vorhanden markiert.' : ' Mengenabweichung – bitte prüfen.'}`, 'success');
-					speak(`Verstanden: Ist ${amount}. Sage weiter, um fortzufahren.`);
-					return;
-				}
-				announce('Nicht eindeutig erkannt. Bitte wiederholen oder Menge manuell eintragen.', 'error');
-			}
-
-			function listen() {
-				if (!recognitionConstructor || recognitionBusy) return;
-				try {
-					recognition = new recognitionConstructor();
-					recognition.lang = 'de-DE';
-					recognition.continuous = false;
-					recognition.interimResults = false;
-					recognition.onstart = () => { recognitionBusy = true; $('#micButton').textContent = '🎙️ Höre zu …'; announce('Ich höre zu.'); };
-					recognition.onresult = (event) => handleSpeech(event.results[0][0].transcript);
-					recognition.onerror = (event) => {
-						const messages = { 'not-allowed': 'Mikrofonzugriff nicht erlaubt. Du kannst die Eingabe manuell fortsetzen.', 'no-speech': 'Keine Sprache erkannt. Bitte noch einmal versuchen.', 'network': 'Spracherkennung benötigt eine Netzwerkverbindung. Manuelle Eingabe ist weiterhin möglich.' };
-						announce(messages[event.error] || `Spracherkennung: ${event.error}. Manuelle Eingabe ist möglich.`, 'error');
-					};
-					recognition.onend = () => { recognitionBusy = false; $('#micButton').textContent = '🎙️ Sprechen'; };
-					recognition.start();
-				} catch {
-					recognitionBusy = false;
-					$('#micButton').textContent = '🎙️ Sprechen';
-					announce('Mikrofon konnte nicht gestartet werden. Bitte manuell eingeben.', 'error');
-				}
+				item.actual = actual;
+				item.remark = remarkInput.value.trim();
+				item.status = /^0(?:[,.]0+)?$/.test(actual) || /^(fehlt|nicht vorhanden)$/i.test(actual) ? 'missing' : 'deviation';
+				saveProgress();
+				advanceAfterSave(`Abweichung bei Position ${item.position} gespeichert.`);
 			}
 
 			function downloadFile(filename, content, type) {
 				const link = document.createElement('a');
-				link.href = URL.createObjectURL(new Blob([content], { type }));
+				const url = URL.createObjectURL(new Blob([content], { type }));
+				link.href = url;
 				link.download = filename;
 				link.click();
-				URL.revokeObjectURL(link.href);
+				window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 			}
 
 			function exportMarkdown() {
@@ -500,8 +425,8 @@
 			function exportCsv() {
 				persistCurrent();
 				const quote = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
-				const rows = [['Kapitel', 'Bereich', 'Vorhanden', 'Fehlt', 'Position', 'Material', 'Soll', 'Ist', 'Bemerkung']];
-				for (const item of items) rows.push([item.chapter, item.group, item.status === 'present' ? 'Ja' : '', item.status === 'missing' ? 'Ja' : '', item.position, item.material, item.target, item.actual, item.remark]);
+				const rows = [['Kapitel', 'Bereich', 'Status', 'Vorhanden', 'Fehlt', 'Position', 'Material', 'Soll', 'Ist', 'Bemerkung']];
+				for (const item of items) rows.push([item.chapter, item.group, item.status === 'deviation' ? 'Abweichung' : item.status === 'missing' ? 'Fehlt' : item.status === 'present' ? 'In Ordnung' : 'Offen', item.status === 'present' ? 'Ja' : '', item.status === 'missing' ? 'Ja' : '', item.position, item.material, item.target, item.actual, item.remark]);
 				downloadFile('Pruefprotokoll-Erkunder.csv', '\uFEFF' + rows.map((row) => row.map(quote).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
 			}
 
@@ -516,7 +441,7 @@
 				meta.textContent = `Prüfdatum: ${dateInput.value || '—'}   |   Prüfer/in: ${inspectorInput.value || '—'}`;
 				report.append(meta);
 				const table = document.createElement('table');
-				const headers = ['Kapitel / Bereich', 'Vorh.', 'Fehl.', 'Pos.', 'Material', 'Soll', 'Ist', 'Bemerkung'];
+				const headers = ['Kapitel / Bereich', 'Status', 'Vorh.', 'Fehl.', 'Pos.', 'Material', 'Soll', 'Ist', 'Bemerkung'];
 				const thead = document.createElement('thead');
 				const headerRow = document.createElement('tr');
 				for (const heading of headers) { const th = document.createElement('th'); th.textContent = heading; headerRow.append(th); }
@@ -525,7 +450,8 @@
 				const tbody = document.createElement('tbody');
 				for (const item of items) {
 					const row = document.createElement('tr');
-					const values = [item.group, item.status === 'present' ? '☑' : '☐', item.status === 'missing' ? '☑' : '☐', item.position, item.material, item.target, item.actual, item.remark];
+					const status = item.status === 'deviation' ? 'Abweichung' : item.status === 'missing' ? 'Fehlt' : item.status === 'present' ? 'In Ordnung' : 'Offen';
+					const values = [item.group, status, item.status === 'present' ? '☑' : '☐', item.status === 'missing' ? '☑' : '☐', item.position, item.material, item.target, item.actual, item.remark];
 					for (const value of values) { const td = document.createElement('td'); td.textContent = value || ''; row.append(td); }
 					tbody.append(row);
 				}
@@ -540,22 +466,16 @@
 				try { loadMarkdown(await file.text(), file.name); }
 				catch { announce('Datei konnte nicht gelesen werden. Bitte eine Markdown-Checkliste auswählen.', 'error'); }
 			});
-			$('#startButton').addEventListener('click', () => { started = true; speakCurrent(); });
-			$('#speakButton').addEventListener('click', speakCurrent);
-			$('#micButton').addEventListener('click', listen);
-			$('#previousButton').addEventListener('click', () => goTo(currentIndex - 1, started));
-			$('#nextButton').addEventListener('click', () => goTo(currentIndex + 1, started));
+			$('#confirmButton').addEventListener('click', confirmPosition);
+			$('#showDeviationButton').addEventListener('click', openDeviation);
+			$('#saveDeviationButton').addEventListener('click', saveDeviation);
+			$('#previousButton').addEventListener('click', () => goTo(currentIndex - 1));
+			$('#nextButton').addEventListener('click', () => goTo(currentIndex + 1));
 			itemSelect.addEventListener('change', () => goTo(Number(itemSelect.value), false));
-			document.querySelectorAll('[data-status]').forEach((button) => button.addEventListener('click', () => setStatus(button.dataset.status)));
 			actualInput.addEventListener('input', () => {
 				if (!items.length) return;
 				items[currentIndex].actual = actualInput.value.trim();
-				const expected = Number(items[currentIndex].target);
-				const amount = Number(actualInput.value);
-				if (!actualInput.value.trim()) items[currentIndex].status = '';
-				else if (Number.isFinite(expected) && Number.isFinite(amount)) items[currentIndex].status = amount === 0 ? 'missing' : amount >= expected ? 'present' : '';
 				saveProgress();
-				updateProgress();
 			});
 			remarkInput.addEventListener('input', () => { if (items.length) { items[currentIndex].remark = remarkInput.value.trim(); saveProgress(); } });
 			inspectorInput.addEventListener('input', saveProgress);
@@ -569,12 +489,11 @@
 				for (const item of items) { item.status = ''; item.actual = ''; item.remark = ''; }
 				inspectorInput.value = '';
 				currentIndex = 0;
-				started = false;
+				deviationOpen = false;
 				render();
-				announce('Prüfstand zurückgesetzt.', 'success');
+				setMessage('Prüfstand zurückgesetzt.', 'success');
 			});
 			dateInput.value = new Date().toISOString().slice(0, 10);
-			if (!('speechSynthesis' in window)) $('#speakButton').disabled = true;
 		})();
 	</script>
 </body>
