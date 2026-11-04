@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#18222c">
+	<meta name="description" content="Offline-fähige, sprachgeführte Materialkontrolle für den Erkunder. Checkliste lokal als Markdown laden.">
+	<title>Sprach-Checkliste | Erkunder</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--ink: #1d2933;
+			--muted: #596873;
+			--paper: #f3f5f6;
+			--card: #fff;
+			--line: #cbd3d9;
+			--accent: #354d5e;
+			--accent-dark: #243746;
+			--good: #287044;
+			--bad: #a23c37;
+			--focus: #a55e00;
+			--shadow: 0 8px 26px rgba(27, 43, 55, .08);
+		}
+		* { box-sizing: border-box; }
+		[hidden] { display: none !important; }
+		body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+		button, input, select { font: inherit; }
+		button { min-height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; background: #fff; color: var(--ink); font-weight: 650; cursor: pointer; }
+		button:hover:not(:disabled) { background: #edf1f3; }
+		button:focus-visible, input:focus-visible, select:focus-visible, .file-button:focus-within { outline: 3px solid #d59a3d; outline-offset: 2px; }
+		button:disabled { opacity: .48; cursor: not-allowed; }
+		button.primary { border-color: var(--accent-dark); background: var(--accent-dark); color: #fff; }
+		button.primary:hover:not(:disabled) { background: var(--accent); }
+		button.good { border-color: #9abda5; color: #205b35; }
+		button.bad { border-color: #dab0ad; color: #852d29; }
+		button.small { min-height: 40px; padding: 7px 12px; font-size: .92rem; }
+		a { color: inherit; }
+		.topbar { background: #202d37; color: #fff; }
+		.topbar-inner { max-width: 1080px; margin: auto; padding: 14px 20px; display: flex; align-items: center; gap: 14px; }
+		.back { color: #fff; text-decoration: none; padding: 8px 0; white-space: nowrap; }
+		.back:hover { text-decoration: underline; }
+		.brand h1 { margin: 0; font-size: clamp(1.15rem, 3vw, 1.55rem); line-height: 1.2; }
+		.brand p { margin: 3px 0 0; color: #d3dae0; font-size: .9rem; }
+		main { max-width: 1080px; margin: auto; padding: 20px; }
+		.panel { margin-bottom: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: var(--shadow); }
+		.panel h2, .panel h3 { margin: 0 0 10px; }
+		.intro { color: var(--muted); margin: 0; }
+		.load-row, .meta-row, .toolbar, .navigation, .status-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+		.load-row { margin-top: 15px; }
+		.file-button { display: inline-flex; min-height: 48px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; background: #fff; font-weight: 650; cursor: pointer; }
+		.file-button input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+		.file-name, .hint, .notice { color: var(--muted); font-size: .92rem; }
+		.notice { margin: 12px 0 0; padding: 10px 12px; border-left: 4px solid #b07a2a; background: #fbf7ef; }
+		.meta-row { margin-top: 16px; }
+		.field { display: grid; gap: 5px; }
+		.field label { font-size: .88rem; font-weight: 700; }
+		.field input, .field select { min-height: 45px; width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; color: var(--ink); background: #fff; }
+		.meta-row .field { flex: 1 1 220px; }
+		.progress-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .93rem; }
+		progress { display: block; width: 100%; height: 12px; margin-top: 8px; accent-color: var(--good); }
+		#workspace[hidden] { display: none; }
+		.item-card { padding: clamp(18px, 4vw, 32px); }
+		.item-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+		.eyebrow { color: var(--muted); font-weight: 700; font-size: .9rem; }
+		.position { margin: 4px 0 0; color: var(--accent-dark); font-size: clamp(2rem, 7vw, 3rem); line-height: 1.12; }
+		.material { margin: 12px 0 0; font-size: clamp(1.35rem, 4vw, 2rem); font-weight: 720; line-height: 1.25; }
+		.expected { display: inline-block; margin: 10px 0 0; padding: 5px 10px; border-radius: 7px; background: #edf1f3; color: #364956; font-weight: 700; }
+		.item-picker { min-width: min(230px, 44vw); }
+		.item-picker label { display: block; margin-bottom: 5px; color: var(--muted); font-size: .82rem; }
+		.group-heading { margin: 28px 0 12px; font-size: 1.05rem; }
+		.qty-remark { display: grid; grid-template-columns: minmax(150px, .75fr) minmax(220px, 1.5fr); gap: 14px; margin-top: 22px; }
+		.qty-remark input { font-size: 1.1rem; }
+		.status-actions { margin-top: 16px; }
+		.status-actions button { flex: 1 1 150px; }
+		.voice-status { min-height: 52px; margin: 16px 0 0; padding: 12px 14px; border-radius: 9px; background: #edf1f3; color: #344652; }
+		.voice-status[data-kind="error"] { background: #fbefed; color: #812e29; }
+		.voice-status[data-kind="success"] { background: #edf6ef; color: #205b35; }
+		.transcript { margin: 7px 0 0; color: var(--muted); font-size: .9rem; overflow-wrap: anywhere; }
+		.navigation { justify-content: space-between; margin-top: 22px; }
+		.nav-group { display: flex; flex-wrap: wrap; gap: 10px; }
+		.toolbar { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
+		.toolbar button { flex: 1 1 160px; }
+		footer { padding: 12px 20px 24px; color: var(--muted); text-align: center; font-size: .85rem; }
+		#printReport { display: none; }
+		@media (max-width: 620px) {
+			.topbar-inner { align-items: flex-start; flex-wrap: wrap; padding: 12px 15px; }
+			.back { width: 100%; padding: 0; }
+			main { padding: 14px; }
+			.panel { padding: 15px; }
+			.item-top { display: grid; }
+			.item-picker { width: 100%; }
+			.qty-remark { grid-template-columns: 1fr; }
+			.navigation { align-items: stretch; }
+			.nav-group { flex: 1 1 100%; }
+			.nav-group button { flex: 1; }
+		}
+		@media print {
+			body { background: #fff; }
+			.topbar, #loader, #progressPanel, #workspace, .toolbar, footer { display: none !important; }
+			main { max-width: none; padding: 0; }
+			#printReport { display: block !important; color: #111; }
+			#printReport h1 { font-size: 20pt; }
+			#printReport table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+			#printReport th, #printReport td { border: 1px solid #888; padding: 4px 5px; text-align: left; vertical-align: top; }
+			#printReport th { background: #e9edf1 !important; print-color-adjust: exact; }
+			#printReport tr { break-inside: avoid; }
+		}
+	</style>
+</head>
+<body>
+	<header class="topbar">
+		<div class="topbar-inner">
+			<a class="back" href="Erkunder-Kiosk.html">← Erkunder-Kiosk</a>
+			<div class="brand">
+				<h1>Sprachgeführte Materialkontrolle</h1>
+				<p>Erkunder · Kater München Mitte 66/1</p>
+			</div>
+		</div>
+	</header>
+
+	<main>
+		<section class="panel" id="loader" aria-labelledby="loadTitle">
+			<h2 id="loadTitle">Checkliste laden</h2>
+			<p class="intro">Wähle die vorhandene Markdown-Checkliste aus. Sie wird nur in diesem Browser geöffnet und nicht an diese Website übertragen.</p>
+			<div class="load-row">
+				<label class="file-button">Markdown-Datei auswählen<input id="fileInput" type="file" accept=".md,text/markdown,text/plain"></label>
+				<span id="fileName" class="file-name" aria-live="polite">Noch keine Datei geladen</span>
+			</div>
+			<p class="notice"><strong>Hinweis zur Spracheingabe:</strong> Vorlesen funktioniert lokal. Die Mikrofon-Erkennung hängt vom Browser ab und kann Audio an einen Online-Spracherkennungsdienst senden. Manuelle Eingabe bleibt jederzeit möglich.</p>
+			<div class="meta-row">
+				<div class="field"><label for="inspector">Prüfer/in</label><input id="inspector" autocomplete="name" placeholder="Name (optional)"></div>
+				<div class="field"><label for="inspectionDate">Prüfdatum</label><input id="inspectionDate" type="date"></div>
+			</div>
+		</section>
+
+		<section class="panel" id="progressPanel" hidden aria-label="Prüffortschritt">
+			<div class="progress-head"><span id="progressText">Position 0 von 0</span><span id="doneText">0 erledigt</span></div>
+			<progress id="progressBar" max="100" value="0">0%</progress>
+		</section>
+
+		<section class="panel item-card" id="workspace" hidden aria-labelledby="position">
+			<div class="item-top">
+				<div>
+					<div class="eyebrow" id="chapterName"></div>
+					<h2 class="position" id="position"></h2>
+					<p class="material" id="material"></p>
+					<span class="expected" id="expected"></span>
+				</div>
+				<div class="item-picker field">
+					<label for="itemSelect">Direkt zu Position</label>
+					<select id="itemSelect" aria-label="Position auswählen"></select>
+				</div>
+			</div>
+			<div class="qty-remark">
+				<div class="field"><label for="actual">Ist-Menge / Status</label><input id="actual" type="text" inputmode="decimal" placeholder="z. B. 2 oder vorhanden"></div>
+				<div class="field"><label for="remark">Bemerkung</label><input id="remark" type="text" placeholder="Optional: Zustand, Verfall, Abweichung …"></div>
+			</div>
+			<h3 class="group-heading">Prüfergebnis</h3>
+			<div class="status-actions" role="group" aria-label="Prüfergebnis">
+				<button class="good" type="button" data-status="present">✓ Vorhanden</button>
+				<button class="bad" type="button" data-status="missing">✕ Fehlt</button>
+				<button type="button" data-status="open">○ Noch offen</button>
+			</div>
+			<p id="voiceStatus" class="voice-status" role="status" aria-live="polite">Checkliste laden, dann „Prüfung starten“ wählen.</p>
+			<p id="transcript" class="transcript" hidden></p>
+			<div class="navigation">
+				<div class="nav-group">
+					<button id="previousButton" type="button" aria-label="Vorherige Position">← Zurück</button>
+					<button id="speakButton" type="button">🔊 Wiederholen</button>
+				</div>
+				<div class="nav-group">
+					<button class="primary" id="startButton" type="button">▶ Prüfung starten</button>
+					<button class="primary" id="micButton" type="button" disabled>🎙️ Sprechen</button>
+					<button id="nextButton" type="button">Weiter →</button>
+				</div>
+			</div>
+			<p class="hint">Sprachbefehle: „vorhanden“, „fehlt“, eine Zahl als Ist-Menge, „Bemerkung …“, „weiter“, „zurück“ oder „wiederholen“.</p>
+		</section>
+
+		<section class="panel toolbar" id="exportPanel" hidden aria-label="Prüfung speichern oder exportieren">
+			<button type="button" id="markdownButton">↓ Ergebnis als Markdown</button>
+			<button type="button" id="csvButton">↓ Ergebnis als CSV</button>
+			<button type="button" id="printButton">🖨 Drucken / PDF</button>
+			<button type="button" id="resetButton">Prüfstand zurücksetzen</button>
+		</section>
+		<section id="printReport" hidden aria-label="Druckbericht"></section>
+	</main>
+
+	<footer>Prototyp · Ohne Server und ohne externe Bibliotheken · Prüfergebnisse werden lokal im Browser gespeichert.</footer>
+
+	<script>
+		(() => {
+			'use strict';
+			const STORAGE_KEY = 'fire-hub-erkunder-sprachcheckliste-v1';
+			const $ = (selector) => document.querySelector(selector);
+			const fileInput = $('#fileInput');
+			const fileName = $('#fileName');
+			const progressPanel = $('#progressPanel');
+			const workspace = $('#workspace');
+			const exportPanel = $('#exportPanel');
+			const voiceStatus = $('#voiceStatus');
+			const transcript = $('#transcript');
+			const itemSelect = $('#itemSelect');
+			const actualInput = $('#actual');
+			const remarkInput = $('#remark');
+			const inspectorInput = $('#inspector');
+			const dateInput = $('#inspectionDate');
+			const recognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+			let items = [];
+			let currentIndex = 0;
+			let recognition = null;
+			let recognitionBusy = false;
+			let started = false;
+
+			function announce(message, kind = '') {
+				voiceStatus.textContent = message;
+				voiceStatus.dataset.kind = kind;
+			}
+
+			function saveProgress() {
+				if (!items.length) return;
+				const progress = Object.fromEntries(items.map((item) => [item.position, {
+					status: item.status || '', actual: item.actual || '', remark: item.remark || ''
+				}]));
+				try {
+					localStorage.setItem(STORAGE_KEY, JSON.stringify({
+						progress, inspector: inspectorInput.value, date: dateInput.value
+					}));
+				} catch {
+					announce('Speichern im Browser nicht möglich. Bitte Prüfung regelmäßig exportieren.', 'error');
+				}
+			}
+
+			function readSavedProgress() {
+				try {
+					return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+				} catch {
+					return null;
+				}
+			}
+
+			function parseMarkdown(text) {
+				const parsed = [];
+				let chapter = '';
+				let group = '';
+				for (const line of text.replace(/^\uFEFF/, '').split(/\r?\n/)) {
+					const mainHeading = line.match(/^##\s+(.+)$/);
+					const subHeading = line.match(/^###\s+(.+)$/);
+					if (mainHeading) { chapter = mainHeading[1].trim(); group = chapter; continue; }
+					if (subHeading) { group = subHeading[1].trim(); continue; }
+					if (!line.startsWith('|')) continue;
+					const cells = line.slice(1, line.endsWith('|') ? -1 : undefined).split('|').map((cell) => cell.trim());
+					if (cells.length < 7 || !/^\d+(?:\.\d+)+$/.test(cells[2] || '')) continue;
+					parsed.push({
+						chapter: chapter || 'Checkliste', group: group || chapter || 'Material',
+						position: cells[2], material: cells[3], target: cells[4],
+						actual: cells[5] || '', remark: cells[6] || '', status: ''
+					});
+				}
+				if (!parsed.length) throw new Error('Keine Materialpositionen gefunden. Erwartet werden MD-Tabellen mit den Spalten Pos., Material und Soll.');
+				const seen = new Set();
+				for (const item of parsed) {
+					if (seen.has(item.position)) throw new Error(`Positionsnummer ${item.position} kommt mehrfach vor.`);
+					seen.add(item.position);
+				}
+				return parsed;
+			}
+
+			function loadMarkdown(text, name) {
+				try {
+					items = parseMarkdown(text);
+					const saved = readSavedProgress();
+					if (saved) {
+						inspectorInput.value = saved.inspector || '';
+						dateInput.value = saved.date || dateInput.value;
+						for (const item of items) {
+						const previous = saved.progress?.[item.position];
+						if (previous) Object.assign(item, previous);
+					}
+					const firstOpen = items.findIndex((item) => !item.status);
+					currentIndex = firstOpen < 0 ? 0 : firstOpen;
+				}
+					fileName.textContent = `${name} · ${items.length} Positionen`;
+					progressPanel.hidden = false;
+					workspace.hidden = false;
+					exportPanel.hidden = false;
+					$('#micButton').disabled = !recognitionConstructor;
+					if (!recognitionConstructor) announce('Spracherkennung ist in diesem Browser nicht verfügbar. Vorlesen und manuelle Eingabe funktionieren weiterhin.');
+					else announce('Checkliste geladen. „Prüfung starten“ liest die erste offene Position vor.', 'success');
+					fillPositionSelector();
+					render();
+					saveProgress();
+				} catch (error) {
+					announce(error.message, 'error');
+				}
+			}
+
+			function fillPositionSelector() {
+				itemSelect.replaceChildren();
+				let previousGroup = '';
+				for (let index = 0; index < items.length; index++) {
+					const item = items[index];
+					if (item.group !== previousGroup) {
+						const group = document.createElement('optgroup');
+						group.label = item.group;
+						itemSelect.append(group);
+						previousGroup = item.group;
+					}
+					const option = document.createElement('option');
+					option.value = String(index);
+					option.textContent = `${item.position} · ${item.material}`;
+					itemSelect.lastElementChild.append(option);
+				}
+			}
+
+			function updateProgress() {
+				const completed = items.filter((entry) => Boolean(entry.status)).length;
+				$('#progressText').textContent = `Position ${currentIndex + 1} von ${items.length}`;
+				$('#doneText').textContent = `${completed} erledigt · ${items.length - completed} offen`;
+				$('#progressBar').value = Math.round(completed / items.length * 100);
+			}
+
+			function render() {
+				if (!items.length) return;
+				const item = items[currentIndex];
+				$('#chapterName').textContent = item.chapter === item.group ? item.chapter : `${item.chapter}  ·  ${item.group}`;
+				$('#position').textContent = `Position ${item.position}`;
+				$('#material').textContent = item.material;
+				$('#expected').textContent = `Soll: ${item.target}`;
+				actualInput.value = item.actual || '';
+				remarkInput.value = item.remark || '';
+				itemSelect.value = String(currentIndex);
+				$('#previousButton').disabled = currentIndex === 0;
+				$('#nextButton').disabled = currentIndex === items.length - 1;
+				updateProgress();
+			}
+
+			function persistCurrent() {
+				if (!items.length) return;
+				items[currentIndex].actual = actualInput.value.trim();
+				items[currentIndex].remark = remarkInput.value.trim();
+				saveProgress();
+			}
+
+			function goTo(index, shouldSpeak = false) {
+				persistCurrent();
+				currentIndex = Math.max(0, Math.min(items.length - 1, index));
+				render();
+				if (shouldSpeak) speakCurrent();
+			}
+
+			function promptFor(item) {
+				return `${item.chapter}. ${item.group}. Position ${item.position}: ${item.material}. Soll ${item.target}. Bitte Stückzahl nennen oder sagen: vorhanden, fehlt, Bemerkung, weiter, zurück oder wiederholen.`;
+			}
+
+			function speak(text, onEnd) {
+				if (!('speechSynthesis' in window)) {
+					announce('Sprachausgabe wird von diesem Browser nicht unterstützt. Du kannst die Position manuell lesen.', 'error');
+					return;
+				}
+				window.speechSynthesis.cancel();
+				const utterance = new SpeechSynthesisUtterance(text);
+				utterance.lang = 'de-DE';
+				utterance.rate = 0.92;
+				utterance.onend = () => { if (onEnd) onEnd(); };
+				utterance.onerror = () => announce('Die Sprachausgabe konnte nicht gestartet werden. Bitte Position manuell lesen.', 'error');
+				window.speechSynthesis.speak(utterance);
+			}
+
+			function speakCurrent() {
+				if (!items.length) return;
+				started = true;
+				$('#startButton').textContent = '▶ Position vorlesen';
+				announce('Position wird vorgelesen. Anschließend Menge einsprechen oder manuell eintragen.');
+				speak(promptFor(items[currentIndex]));
+			}
+
+			function setStatus(status) {
+				if (!items.length) return;
+				const item = items[currentIndex];
+				item.status = status;
+				if (status === 'missing') {
+					item.actual = '0';
+					actualInput.value = '0';
+				} else if (status === 'present' && !actualInput.value.trim() && /^\d+$/.test(item.target)) {
+					item.actual = item.target;
+					actualInput.value = item.target;
+				}
+				persistCurrent();
+				render();
+				announce(status === 'present' ? 'Als vorhanden gespeichert.' : status === 'missing' ? 'Als fehlend gespeichert; Ist-Menge 0.' : 'Position wieder als offen markiert.', 'success');
+			}
+
+			const smallNumbers = {
+				null: 0, kein: 0, keine: 0, eins: 1, eine: 1, einer: 1, ein: 1,
+				zwei: 2, drei: 3, vier: 4, funf: 5, sechs: 6, sieben: 7, acht: 8, neun: 9,
+				zehn: 10, elf: 11, zwolf: 12, dreizehn: 13, vierzehn: 14, funfzehn: 15,
+				sechzehn: 16, siebzehn: 17, achtzehn: 18, neunzehn: 19, zwanzig: 20,
+				dreissig: 30, vierzig: 40, funfzig: 50, sechzig: 60, siebzig: 70,
+				achtzig: 80, neunzig: 90, hundert: 100
+			};
+
+			function extractNumber(text) {
+				const digits = text.match(/\b\d+(?:[,.]\d+)?\b/);
+				if (digits) return digits[0].replace(',', '.');
+				const words = text.toLocaleLowerCase('de-DE').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').split(/[^a-z]+/).filter(Boolean);
+				for (const word of words) {
+					if (Object.hasOwn(smallNumbers, word)) return String(smallNumbers[word]);
+					if (word.includes('und')) {
+						const [ones, tens] = word.split('und');
+						if (Object.hasOwn(smallNumbers, ones) && Object.hasOwn(smallNumbers, tens) && smallNumbers[ones] < 10 && smallNumbers[tens] >= 20) return String(smallNumbers[tens] + smallNumbers[ones]);
+					}
+				}
+				return null;
+			}
+
+			function handleSpeech(rawText) {
+				const text = rawText.trim().toLocaleLowerCase('de-DE');
+				transcript.hidden = false;
+				transcript.textContent = `Erkannt: „${rawText}“`;
+				if (/\b(wiederholen|noch mal|nochmal|wiederhole)\b/.test(text)) { speakCurrent(); return; }
+				if (/\b(zurueck|zurück|vorherige position)\b/.test(text)) { goTo(currentIndex - 1, true); return; }
+				if (/\b(weiter|naechste position|nächste position)\b/.test(text)) { goTo(currentIndex + 1, true); return; }
+				if (/\b(pause|stopp|stop)\b/.test(text)) { window.speechSynthesis?.cancel(); announce('Vorlesen pausiert.'); return; }
+				if (/\b(bemerkung|notiz)\b/.test(text)) {
+					const note = rawText.replace(/^.*?\b(bemerkung|notiz)\b\s*/i, '').trim();
+					if (note) { remarkInput.value = note; persistCurrent(); announce(`Bemerkung gespeichert: ${note}`, 'success'); }
+					else announce('Bitte nach „Bemerkung“ den Text sprechen.');
+					return;
+				}
+				if (/\b(fehlt|nicht vorhanden)\b/.test(text)) { setStatus('missing'); return; }
+				if (/\b(vorhanden|vollstaendig|vollständig|komplett)\b/.test(text)) { setStatus('present'); return; }
+				const amount = extractNumber(text);
+				if (amount !== null) {
+					actualInput.value = amount;
+					const expected = Number(items[currentIndex].target);
+					items[currentIndex].status = amount === '0' ? 'missing' : Number.isFinite(expected) && Number(amount) < expected ? '' : 'present';
+					persistCurrent();
+					render();
+					announce(`Ist-Menge ${amount} gespeichert.${items[currentIndex].status ? ' Als vorhanden markiert.' : ' Mengenabweichung – bitte prüfen.'}`, 'success');
+					speak(`Verstanden: Ist ${amount}. Sage weiter, um fortzufahren.`);
+					return;
+				}
+				announce('Nicht eindeutig erkannt. Bitte wiederholen oder Menge manuell eintragen.', 'error');
+			}
+
+			function listen() {
+				if (!recognitionConstructor || recognitionBusy) return;
+				try {
+					recognition = new recognitionConstructor();
+					recognition.lang = 'de-DE';
+					recognition.continuous = false;
+					recognition.interimResults = false;
+					recognition.onstart = () => { recognitionBusy = true; $('#micButton').textContent = '🎙️ Höre zu …'; announce('Ich höre zu.'); };
+					recognition.onresult = (event) => handleSpeech(event.results[0][0].transcript);
+					recognition.onerror = (event) => {
+						const messages = { 'not-allowed': 'Mikrofonzugriff nicht erlaubt. Du kannst die Eingabe manuell fortsetzen.', 'no-speech': 'Keine Sprache erkannt. Bitte noch einmal versuchen.', 'network': 'Spracherkennung benötigt eine Netzwerkverbindung. Manuelle Eingabe ist weiterhin möglich.' };
+						announce(messages[event.error] || `Spracherkennung: ${event.error}. Manuelle Eingabe ist möglich.`, 'error');
+					};
+					recognition.onend = () => { recognitionBusy = false; $('#micButton').textContent = '🎙️ Sprechen'; };
+					recognition.start();
+				} catch {
+					recognitionBusy = false;
+					$('#micButton').textContent = '🎙️ Sprechen';
+					announce('Mikrofon konnte nicht gestartet werden. Bitte manuell eingeben.', 'error');
+				}
+			}
+
+			function downloadFile(filename, content, type) {
+				const link = document.createElement('a');
+				link.href = URL.createObjectURL(new Blob([content], { type }));
+				link.download = filename;
+				link.click();
+				URL.revokeObjectURL(link.href);
+			}
+
+			function exportMarkdown() {
+				persistCurrent();
+				let markdown = `# Materialkontrolle – Kater München Mitte 66/1\n\n**Prüfdatum:** ${dateInput.value || '____________________'}\n\n**Prüfer/in:** ${inspectorInput.value || '____________________'}\n\n`;
+				let currentChapter = '';
+				let currentGroup = '';
+				for (const item of items) {
+					if (item.chapter !== currentChapter) {
+						currentChapter = item.chapter;
+						currentGroup = '';
+						markdown += `\n## ${currentChapter}\n\n`;
+					}
+					if (item.group !== currentGroup) {
+						currentGroup = item.group;
+						markdown += `### ${currentGroup}\n\n|Vorh.|Fehl.|Pos.|Material|Soll|Ist|Bemerkung|\n|:-:|:-:|---|---|--:|--:|---|\n`;
+					}
+					const present = item.status === 'present' ? '☑' : '□';
+					const missing = item.status === 'missing' ? '☑' : '□';
+					const clean = (value) => String(value || '').replaceAll('|', '\\|');
+					markdown += `|${present}|${missing}|${item.position}|${clean(item.material)}|${clean(item.target)}|${clean(item.actual)}|${clean(item.remark)}|\n`;
+				}
+				downloadFile('Pruefprotokoll-Erkunder.md', markdown, 'text/markdown;charset=utf-8');
+			}
+
+			function exportCsv() {
+				persistCurrent();
+				const quote = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
+				const rows = [['Kapitel', 'Bereich', 'Vorhanden', 'Fehlt', 'Position', 'Material', 'Soll', 'Ist', 'Bemerkung']];
+				for (const item of items) rows.push([item.chapter, item.group, item.status === 'present' ? 'Ja' : '', item.status === 'missing' ? 'Ja' : '', item.position, item.material, item.target, item.actual, item.remark]);
+				downloadFile('Pruefprotokoll-Erkunder.csv', '\uFEFF' + rows.map((row) => row.map(quote).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+			}
+
+			function printReport() {
+				persistCurrent();
+				const report = $('#printReport');
+				report.replaceChildren();
+				const title = document.createElement('h1');
+				title.textContent = 'Materialkontrolle – Kater München Mitte 66/1';
+				report.append(title);
+				const meta = document.createElement('p');
+				meta.textContent = `Prüfdatum: ${dateInput.value || '—'}   |   Prüfer/in: ${inspectorInput.value || '—'}`;
+				report.append(meta);
+				const table = document.createElement('table');
+				const headers = ['Kapitel / Bereich', 'Vorh.', 'Fehl.', 'Pos.', 'Material', 'Soll', 'Ist', 'Bemerkung'];
+				const thead = document.createElement('thead');
+				const headerRow = document.createElement('tr');
+				for (const heading of headers) { const th = document.createElement('th'); th.textContent = heading; headerRow.append(th); }
+				thead.append(headerRow);
+				table.append(thead);
+				const tbody = document.createElement('tbody');
+				for (const item of items) {
+					const row = document.createElement('tr');
+					const values = [item.group, item.status === 'present' ? '☑' : '☐', item.status === 'missing' ? '☑' : '☐', item.position, item.material, item.target, item.actual, item.remark];
+					for (const value of values) { const td = document.createElement('td'); td.textContent = value || ''; row.append(td); }
+					tbody.append(row);
+				}
+				table.append(tbody);
+				report.append(table);
+				window.print();
+			}
+
+			fileInput.addEventListener('change', async () => {
+				const file = fileInput.files?.[0];
+				if (!file) return;
+				try { loadMarkdown(await file.text(), file.name); }
+				catch { announce('Datei konnte nicht gelesen werden. Bitte eine Markdown-Checkliste auswählen.', 'error'); }
+			});
+			$('#startButton').addEventListener('click', () => { started = true; speakCurrent(); });
+			$('#speakButton').addEventListener('click', speakCurrent);
+			$('#micButton').addEventListener('click', listen);
+			$('#previousButton').addEventListener('click', () => goTo(currentIndex - 1, started));
+			$('#nextButton').addEventListener('click', () => goTo(currentIndex + 1, started));
+			itemSelect.addEventListener('change', () => goTo(Number(itemSelect.value), false));
+			document.querySelectorAll('[data-status]').forEach((button) => button.addEventListener('click', () => setStatus(button.dataset.status)));
+			actualInput.addEventListener('input', () => {
+				if (!items.length) return;
+				items[currentIndex].actual = actualInput.value.trim();
+				const expected = Number(items[currentIndex].target);
+				const amount = Number(actualInput.value);
+				if (!actualInput.value.trim()) items[currentIndex].status = '';
+				else if (Number.isFinite(expected) && Number.isFinite(amount)) items[currentIndex].status = amount === 0 ? 'missing' : amount >= expected ? 'present' : '';
+				saveProgress();
+				updateProgress();
+			});
+			remarkInput.addEventListener('input', () => { if (items.length) { items[currentIndex].remark = remarkInput.value.trim(); saveProgress(); } });
+			inspectorInput.addEventListener('input', saveProgress);
+			dateInput.addEventListener('change', saveProgress);
+			$('#markdownButton').addEventListener('click', exportMarkdown);
+			$('#csvButton').addEventListener('click', exportCsv);
+			$('#printButton').addEventListener('click', printReport);
+			$('#resetButton').addEventListener('click', () => {
+				if (!window.confirm('Alle gespeicherten Prüfergebnisse auf diesem Gerät löschen?')) return;
+				localStorage.removeItem(STORAGE_KEY);
+				for (const item of items) { item.status = ''; item.actual = ''; item.remark = ''; }
+				inspectorInput.value = '';
+				currentIndex = 0;
+				started = false;
+				render();
+				announce('Prüfstand zurückgesetzt.', 'success');
+			});
+			dateInput.value = new Date().toISOString().slice(0, 10);
+			if (!('speechSynthesis' in window)) $('#speakButton').disabled = true;
+		})();
+	</script>
+</body>
+</html>
