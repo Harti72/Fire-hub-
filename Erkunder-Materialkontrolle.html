@@ -130,7 +130,7 @@
 				<label class="file-button">Markdown-Datei auswählen<input id="fileInput" type="file" accept=".md,text/markdown,text/plain"></label>
 				<span id="fileName" class="file-name" aria-live="polite">Noch keine Datei geladen</span>
 			</div>
-			<p class="notice">Die Datei wird nur lokal im Browser eingelesen. Prüfergebnisse bleiben auf diesem Gerät und können als Markdown oder CSV exportiert werden.</p>
+			<p class="notice">Die Datei wird nur lokal im Browser eingelesen. Prüfergebnisse bleiben auf diesem Gerät und können als Markdown oder CSV exportiert werden. Exportdateien enthalten Prüfdatum und Prüfername im Dateinamen.</p>
 			<div class="meta-row">
 				<div class="field"><label for="inspector">Prüfer/in</label><input id="inspector" autocomplete="name" placeholder="Name (optional)"></div>
 				<div class="field"><label for="inspectionDate">Prüfdatum</label><input id="inspectionDate" type="date"></div>
@@ -399,6 +399,14 @@
 				window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 			}
 
+			function reportFilename(extension) {
+				const date = dateInput.value || new Date().toISOString().slice(0, 10);
+				const inspector = inspectorInput.value.trim()
+					? inspectorInput.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '')
+					: 'Ohne-Pruefer';
+				return `Pruefprotokoll-Erkunder_${date}_${inspector || 'Ohne-Pruefer'}.${extension}`;
+			}
+
 			function exportMarkdown() {
 				persistCurrent();
 				let markdown = `# Materialkontrolle – Kater München Mitte 66/1\n\n**Prüfdatum:** ${dateInput.value || '____________________'}\n\n**Prüfer/in:** ${inspectorInput.value || '____________________'}\n\n`;
@@ -419,7 +427,7 @@
 					const clean = (value) => String(value || '').replaceAll('|', '\\|');
 					markdown += `|${present}|${missing}|${item.position}|${clean(item.material)}|${clean(item.target)}|${clean(item.actual)}|${clean(item.remark)}|\n`;
 				}
-				downloadFile('Pruefprotokoll-Erkunder.md', markdown, 'text/markdown;charset=utf-8');
+				downloadFile(reportFilename('md'), markdown, 'text/markdown;charset=utf-8');
 			}
 
 			function exportCsv() {
@@ -427,11 +435,12 @@
 				const quote = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
 				const rows = [['Kapitel', 'Bereich', 'Status', 'Vorhanden', 'Fehlt', 'Position', 'Material', 'Soll', 'Ist', 'Bemerkung']];
 				for (const item of items) rows.push([item.chapter, item.group, item.status === 'deviation' ? 'Abweichung' : item.status === 'missing' ? 'Fehlt' : item.status === 'present' ? 'In Ordnung' : 'Offen', item.status === 'present' ? 'Ja' : '', item.status === 'missing' ? 'Ja' : '', item.position, item.material, item.target, item.actual, item.remark]);
-				downloadFile('Pruefprotokoll-Erkunder.csv', '\uFEFF' + rows.map((row) => row.map(quote).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+				downloadFile(reportFilename('csv'), '\uFEFF' + rows.map((row) => row.map(quote).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
 			}
 
 			function printReport() {
 				persistCurrent();
+				const previousTitle = document.title;
 				const report = $('#printReport');
 				report.replaceChildren();
 				const title = document.createElement('h1');
@@ -457,6 +466,8 @@
 				}
 				table.append(tbody);
 				report.append(table);
+				document.title = reportFilename('pdf').replace(/\.pdf$/i, '');
+				window.addEventListener('afterprint', () => { document.title = previousTitle; }, { once: true });
 				window.print();
 			}
 
