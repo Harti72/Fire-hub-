@@ -58,6 +58,9 @@
 		.meta-row .field { flex: 1 1 220px; }
 		.progress-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .93rem; }
 		progress { display: block; width: 100%; height: 12px; margin-top: 8px; accent-color: var(--good); }
+		.chapter-nav { margin-top: 12px; }
+		.chapter-nav label { display: block; margin-bottom: 5px; font-size: .88rem; font-weight: 700; }
+		.chapter-nav select { min-height: 45px; width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; background: #fff; color: var(--ink); font: inherit; }
 		#workspace[hidden] { display: none; }
 		.item-card { padding: clamp(18px, 4vw, 32px); }
 		.item-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
@@ -140,6 +143,10 @@
 		<section class="panel" id="progressPanel" hidden aria-label="Prüffortschritt">
 			<div class="progress-head"><span id="progressText">Position 0 von 0</span><span id="doneText">0 erledigt</span></div>
 			<progress id="progressBar" max="100" value="0">0%</progress>
+			<div class="chapter-nav">
+				<label for="chapterSelect">Kapitelübersicht – direkt zum Kapitel springen</label>
+				<select id="chapterSelect" aria-label="Kapitel auswählen"></select>
+			</div>
 		</section>
 
 		<section class="panel item-card" id="workspace" hidden aria-labelledby="position">
@@ -199,6 +206,7 @@
 			const appStatus = $('#appStatus');
 			const deviationPanel = $('#deviationPanel');
 			const itemSelect = $('#itemSelect');
+			const chapterSelect = $('#chapterSelect');
 			const actualInput = $('#actual');
 			const remarkInput = $('#remark');
 			const inspectorInput = $('#inspector');
@@ -210,6 +218,23 @@
 			function setMessage(message, kind = '') {
 				appStatus.textContent = message;
 				appStatus.dataset.kind = kind;
+			}
+
+			function fillChapterSelector() {
+				chapterSelect.replaceChildren();
+				const chapters = new Map();
+				for (let index = 0; index < items.length; index++) {
+					const chapter = items[index].chapter;
+					if (!chapters.has(chapter)) chapters.set(chapter, []);
+					chapters.get(chapter).push(index);
+				}
+				for (const [chapter, indexes] of chapters) {
+					const completed = indexes.filter((index) => Boolean(items[index].status)).length;
+					const option = document.createElement('option');
+					option.value = String(indexes[0]);
+					option.textContent = `${chapter} · ${completed}/${indexes.length} erledigt`;
+					chapterSelect.append(option);
+				}
 			}
 
 			function saveProgress() {
@@ -280,6 +305,7 @@
 					workspace.hidden = false;
 					exportPanel.hidden = false;
 					fillPositionSelector();
+					fillChapterSelector();
 					render();
 					saveProgress();
 					setMessage(firstOpen < 0 ? 'Alle Positionen dieser Checkliste sind bereits geprüft.' : 'Bereit. Mit „Passt – bestätigen & weiter“ die angezeigte Position abhaken.', 'success');
@@ -311,6 +337,13 @@
 				$('#progressText').textContent = `Position ${currentIndex + 1} von ${items.length}`;
 				$('#doneText').textContent = `${completed} erledigt · ${items.length - completed} offen`;
 				$('#progressBar').value = Math.round(completed / items.length * 100);
+				for (const option of chapterSelect.options) {
+					const start = Number(option.value);
+					const chapter = items[start].chapter;
+					const chapterItems = items.filter((item) => item.chapter === chapter);
+					const chapterDone = chapterItems.filter((item) => Boolean(item.status)).length;
+					option.textContent = `${chapter} · ${chapterDone}/${chapterItems.length} erledigt`;
+				}
 			}
 
 			function render() {
@@ -323,6 +356,7 @@
 				actualInput.value = item.actual || '';
 				remarkInput.value = item.remark || '';
 				itemSelect.value = String(currentIndex);
+				chapterSelect.value = String(items.findIndex((entry) => entry.chapter === item.chapter));
 				$('#previousButton').disabled = currentIndex === 0;
 				$('#nextButton').disabled = currentIndex === items.length - 1;
 				deviationPanel.hidden = !deviationOpen;
@@ -493,6 +527,12 @@
 			$('#previousButton').addEventListener('click', () => goTo(currentIndex - 1));
 			$('#nextButton').addEventListener('click', () => goTo(currentIndex + 1));
 			itemSelect.addEventListener('change', () => goTo(Number(itemSelect.value), false));
+			chapterSelect.addEventListener('change', () => {
+				const chapterStart = Number(chapterSelect.value);
+				const chapter = items[chapterStart]?.chapter;
+				const nextOpen = items.findIndex((item) => item.chapter === chapter && !item.status);
+				goTo(nextOpen >= 0 ? nextOpen : chapterStart);
+			});
 			actualInput.addEventListener('input', () => {
 				if (!items.length) return;
 				items[currentIndex].actual = actualInput.value.trim();
