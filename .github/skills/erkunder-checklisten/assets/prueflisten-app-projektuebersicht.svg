@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1160" viewBox="0 0 1600 1160" role="img" aria-labelledby="title description">
+  <title id="title">Pr&#252;flisten-App auf einen Blick f&#252;r Erstanwender</title>
+  <desc id="description">Dateibasierter Pr&#252;fablauf mit SharePoint als f&#252;hrendem Ablageort, Teams als Einstieg und einer App zur Bearbeitung der MD-Dateien. Tickets werden separat manuell nachverfolgt.</desc>
+  <defs>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #18343c; }
+      .eyebrow { font-size: 15px; font-weight: 700; }
+      .title { font-size: 38px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #526a70; }
+      .section { font-size: 16px; font-weight: 700; }
+      .step { font-size: 13px; font-weight: 700; fill: #fff; }
+      .card-title { font-size: 20px; font-weight: 700; }
+      .body { font-size: 15px; fill: #3e565c; }
+      .small { font-size: 13px; fill: #587077; }
+      .tiny { font-size: 11px; fill: #61777c; }
+      .strong { font-weight: 700; fill: #18343c; }
+      .white { fill: #fff; }
+      .line { stroke: #97aaa9; stroke-width: 2; fill: none; }
+      .card { fill: #fff; stroke: #d3dedb; stroke-width: 1.5; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#718d8a" />
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1160" fill="#f2f6f4" />
+  <path d="M0 0H1600V12H0Z" fill="#2f735f" />
+
+  <text x="72" y="60" class="eyebrow" fill="#2f735f">PROJEKT&#220;BERSICHT | EINSTIEG F&#220;R ERSTANWENDER</text>
+  <text x="72" y="111" class="title">Pr&#252;flisten-App: ein klarer Ablauf</text>
+  <text x="72" y="145" class="subtitle">Pr&#252;fpl&#228;ne und Ergebnisse bleiben Dateien. Die App bearbeitet sie; SharePoint h&#228;lt sie zusammen.</text>
+  <rect x="1270" y="54" width="258" height="38" rx="19" fill="#e3ece8" />
+  <circle cx="1292" cy="73" r="6" fill="#c17b24" />
+  <text x="1307" y="78" class="tiny strong">ZIELKONZEPT</text>
+
+  <rect x="72" y="179" width="1456" height="76" rx="8" fill="#18343c" />
+  <text x="96" y="208" class="eyebrow white">EIN GEMEINSAMER ARBEITSBEREICH</text>
+  <text x="96" y="233" class="small white">SharePoint-Bibliothek = f&#252;hrender Ablageort</text>
+  <line x1="565" y1="195" x2="565" y2="239" stroke="#587077" />
+  <text x="597" y="208" class="eyebrow white">TEAMS</text>
+  <text x="597" y="233" class="small white">Einstieg zu Dateien und App</text>
+  <line x1="1023" y1="195" x2="1023" y2="239" stroke="#587077" />
+  <text x="1055" y="208" class="eyebrow white">PR&#220;FLISTEN-APP</text>
+  <text x="1055" y="233" class="small white">Liest und bearbeitet MD-Dateien; kein eigener Datenspeicher</text>
+
+  <text x="72" y="300" class="section">DIE F&#220;NF SCHRITTE</text>
+  <text x="1528" y="300" text-anchor="end" class="small">Mit dem Plan starten. Mit einem nachvollziehbaren Ergebnis abschlie&#223;en.</text>
+
+  <path d="M342 466H365" class="line" marker-end="url(#arrow)" />
+  <path d="M637 466H660" class="line" marker-end="url(#arrow)" />
+  <path d="M932 466H955" class="line" marker-end="url(#arrow)" />
+  <path d="M1227 466H1250" class="line" marker-end="url(#arrow)" />
+
+  <g>
+    <rect x="72" y="326" width="270" height="282" rx="8" class="card" />
+    <rect x="72" y="326" width="270" height="8" rx="4" fill="#c17b24" />
+    <circle cx="101" cy="367" r="18" fill="#c17b24" />
+    <text x="101" y="372" text-anchor="middle" class="step">01</text>
+    <text x="130" y="373" class="card-title">Eingang</text>
+    <text x="94" y="415" class="body">
+      <tspan x="94" dy="0" class="strong">Externe Pr&#252;fliste</tspan>
+      <tspan x="94" dy="24">PDF oder Excel-Datei kommt in</tspan>
+      <tspan x="94" dy="21" class="strong">00_Eingang</tspan>
+      <tspan x="94" dy="30">Eine Person sichtet sie. Das</tspan>
+      <tspan x="94" dy="21">Original bleibt unver&#228;ndert.</tspan>
+    </text>
+    <rect x="94" y="558" width="174" height="25" rx="12" fill="#f7ead8" />
+    <text x="181" y="575" text-anchor="middle" class="tiny strong">MENSCHLICHE SICHTUNG</text>
+  </g>
+
+  <g>
+    <rect x="367" y="326" width="270" height="282" rx="8" class="card" />
+    <rect x="367" y="326" width="270" height="8" rx="4" fill="#2f735f" />
+    <circle cx="396" cy="367" r="18" fill="#2f735f" />
+    <text x="396" y="372" text-anchor="middle" class="step">02</text>
+    <text x="425" y="373" class="card-title">Plan freigeben</text>
+    <text x="389" y="415" class="body">
+      <tspan x="389" dy="0" class="strong">Pr&#252;fplan-MD</tspan>
+      <tspan x="389" dy="24">Enth&#228;lt Pr&#252;fpositionen und</tspan>
+      <tspan x="389" dy="21">best&#228;tigte Pr&#252;ffristen.</tspan>
+      <tspan x="389" dy="30">Vor Freigabe Plan-ID und</tspan>
+      <tspan x="389" dy="21">Version festlegen.</tspan>
+    </text>
+    <rect x="389" y="558" width="194" height="25" rx="12" fill="#e0eee8" />
+    <text x="486" y="575" text-anchor="middle" class="tiny strong">10_Freigegebene_Pl&#228;ne</text>
+  </g>
+
+  <g>
+    <rect x="662" y="326" width="270" height="282" rx="8" class="card" />
+    <rect x="662" y="326" width="270" height="8" rx="4" fill="#397d86" />
+    <circle cx="691" cy="367" r="18" fill="#397d86" />
+    <text x="691" y="372" text-anchor="middle" class="step">03</text>
+    <text x="720" y="373" class="card-title">Pr&#252;flauf starten</text>
+    <text x="684" y="415" class="body">
+      <tspan x="684" dy="0" class="strong">Aktiven Plan in der App &#246;ffnen</tspan>
+      <tspan x="684" dy="24">Positionen pr&#252;fen und Ergebnis</tspan>
+      <tspan x="684" dy="21">oder Befund dokumentieren.</tspan>
+      <tspan x="684" dy="30">Die App bearbeitet Dateien; sie</tspan>
+      <tspan x="684" dy="21">hat keine eigene Datenbank.</tspan>
+    </text>
+    <rect x="684" y="558" width="151" height="25" rx="12" fill="#deeff0" />
+    <text x="759" y="575" text-anchor="middle" class="tiny strong">PRUEFER + APP</text>
+  </g>
+
+  <g>
+    <rect x="957" y="326" width="270" height="282" rx="8" class="card" />
+    <rect x="957" y="326" width="270" height="8" rx="4" fill="#4d7180" />
+    <circle cx="986" cy="367" r="18" fill="#4d7180" />
+    <text x="986" y="372" text-anchor="middle" class="step">04</text>
+    <text x="1015" y="373" class="card-title">Lauf abschlie&#223;en</text>
+    <text x="979" y="415" class="body">
+      <tspan x="979" dy="0" class="strong">Ein Lauf erzeugt zwei Dateien</tspan>
+      <tspan x="979" dy="24">Ergebnis-MD zum Abgleichen</tspan>
+      <tspan x="979" dy="21">und zur Weiterverarbeitung.</tspan>
+      <tspan x="979" dy="30">PDF zum Lesen und Weitergeben.</tspan>
+      <tspan x="979" dy="21">Beide haben dieselbe Lauf-ID.</tspan>
+    </text>
+    <rect x="979" y="558" width="195" height="25" rx="12" fill="#e2ebef" />
+    <text x="1076" y="575" text-anchor="middle" class="tiny strong">20_Prueflaeufe</text>
+  </g>
+
+  <g>
+    <rect x="1252" y="326" width="276" height="282" rx="8" class="card" />
+    <rect x="1252" y="326" width="276" height="8" rx="4" fill="#a95d43" />
+    <circle cx="1281" cy="367" r="18" fill="#a95d43" />
+    <text x="1281" y="372" text-anchor="middle" class="step">05</text>
+    <text x="1310" y="373" class="card-title">Ma&#223;nahmen nachhalten</text>
+    <text x="1274" y="415" class="body">
+      <tspan x="1274" dy="0" class="strong">Steuerungs-MD je Einheit</tspan>
+      <tspan x="1274" dy="24">Verknuepft Plaene, Ergebnisse</tspan>
+      <tspan x="1274" dy="21">und offene Ma&#223;nahmen.</tspan>
+      <tspan x="1274" dy="30">Tickets bleiben getrennt.</tspan>
+      <tspan x="1274" dy="21">Ticketnummer manuell eintragen.</tspan>
+    </text>
+    <rect x="1274" y="558" width="165" height="25" rx="12" fill="#f4e5e0" />
+    <text x="1356" y="575" text-anchor="middle" class="tiny strong">30_Steuerung</text>
+  </g>
+
+  <path d="M1390 608V630H797V614" class="line" marker-end="url(#arrow)" />
+  <rect x="521" y="638" width="546" height="34" rx="17" fill="#e4ece8" />
+  <text x="794" y="660" text-anchor="middle" class="small strong">N&#228;chster Lauf: aktiven Plan nutzen und offene Ma&#223;nahmen mitnehmen</text>
+
+  <text x="72" y="725" class="section">WO DIE DATEIEN LIEGEN</text>
+  <rect x="72" y="746" width="1456" height="142" rx="8" fill="#fff" stroke="#d3dedb" stroke-width="1.5" />
+  <line x1="552" y1="767" x2="552" y2="867" stroke="#d3dedb" />
+  <line x1="1035" y1="767" x2="1035" y2="867" stroke="#d3dedb" />
+  <text x="98" y="781" class="eyebrow" fill="#2f735f">01 | PR&#220;FPL&#196;NE</text>
+  <text x="98" y="812" class="body strong">10_Freigegebene_Pl&#228;ne / Plan-ID.md</text>
+  <text x="98" y="840" class="small">Freigegebene Checkliste und Pr&#252;ffrist.</text>
+  <text x="98" y="862" class="small">&#196;nderungen nur nach Sichtung und Freigabe.</text>
+  <text x="582" y="781" class="eyebrow" fill="#4d7180">02 | PR&#220;FLAUF-NACHWEISE</text>
+  <text x="582" y="812" class="body strong">20_Pr&#252;fl&#228;ufe / Plan-ID / Jahr</text>
+  <text x="582" y="840" class="small">Je Lauf eine Ergebnis-MD und ein PDF.</text>
+  <text x="582" y="862" class="small">Abgeschlossene L&#228;ufe nicht &#252;berschreiben.</text>
+  <text x="1065" y="781" class="eyebrow" fill="#a95d43">03 | STEUERUNG</text>
+  <text x="1065" y="812" class="body strong">30_Steuerung / Einheit_steuerung.md</text>
+  <text x="1065" y="840" class="small">L&#228;ufe, Verantwortliche, Termine, Ma&#223;nahmen.</text>
+  <text x="1065" y="862" class="small">Manuelle Ticketreferenz; keine Schnittstelle.</text>
+
+  <rect x="72" y="916" width="1456" height="91" rx="8" fill="#e8efec" />
+  <circle cx="111" cy="961" r="17" fill="#2f735f" />
+  <path d="M103 961l6 6 11-13" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="145" y="951" class="eyebrow" fill="#2f735f">MEIN ERSTER PR&#220;FLAUF</text>
+  <text x="145" y="978" class="body">Teams &#246;ffnen</text>
+  <path d="M280 963H323" class="line" marker-end="url(#arrow)" />
+  <text x="344" y="978" class="body">Einheit und freigegebenen Plan auswaehlen</text>
+  <path d="M700 963H743" class="line" marker-end="url(#arrow)" />
+  <text x="764" y="978" class="body">Pr&#252;fen, abschlie&#223;en und offene Ma&#223;nahmen ansehen</text>
+
+  <rect x="72" y="1032" width="1456" height="75" rx="8" fill="#fff" stroke="#d3dedb" stroke-width="1.5" />
+  <text x="96" y="1062" class="small strong">Wichtig:</text>
+  <text x="157" y="1062" class="small">Leere Pr&#252;ffrist bedeutet "noch nicht bewertet", nicht "keine Pr&#252;fung n&#246;tig". DGUV-Fristen erst kl&#228;ren.</text>
+  <text x="96" y="1087" class="tiny">Ein PDF-Export allein ist nicht revisionssicher. Aufbewahrung und Versionierung in SharePoint mit der Administration kl&#228;ren.</text>
+
+  <text x="72" y="1137" class="tiny">KI-GENERIERTE ARBEITSGRAFIK | Bezeichnungen, Ablagepfade und App-Funktionen vor Nutzung fachlich pr&#252;fen.</text>
+  <text x="1528" y="1137" text-anchor="end" class="tiny">SharePoint = Dateien | Teams = Einstieg | App = Anzeige und Bearbeitung</text>
+</svg>
